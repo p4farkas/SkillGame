@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 
 import java.util.Random;
 
-public class DrawingGameView extends View {
+public class RajzolgatoView extends View {
 
     private Paint drawPaint;
     private Paint pointPaint;
@@ -39,7 +39,7 @@ public class DrawingGameView extends View {
 
     Random r;
 
-    public DrawingGameView(Context context, AttributeSet attrs){
+    public RajzolgatoView(Context context, AttributeSet attrs){
         super(context, attrs);
         this.isInEditMode();
 
