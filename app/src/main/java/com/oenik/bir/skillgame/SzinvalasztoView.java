@@ -36,10 +36,6 @@ public class SzinvalasztoView extends GameAbstract {
 
     private int current_game = 0;
 
-    private long time = 0;
-
-    private Thread time_thread;
-
     public SzinvalasztoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.isInEditMode();
@@ -56,7 +52,7 @@ public class SzinvalasztoView extends GameAbstract {
             Log.i("Szinvalaszto", "NEM TALÁLT");
 
         current_game++;
-        time = System.currentTimeMillis();
+        old_time = System.currentTimeMillis();
         if (current_game < GAME_COUNT)
             invalidate();
     }
@@ -82,7 +78,7 @@ public class SzinvalasztoView extends GameAbstract {
         textPaint.setAntiAlias(true);
         textPaint.setStrokeCap(Paint.Cap.ROUND);
 
-        time = System.currentTimeMillis();
+        old_time = System.currentTimeMillis();
 
         //Háttérszálon figyeljük az időt
         time_thread = new Thread(new Runnable() {
@@ -91,9 +87,9 @@ public class SzinvalasztoView extends GameAbstract {
                 do {
                     long current_time = System.currentTimeMillis();
 
-                    if ((current_time - time) >= 1000) {
+                    if ((current_time - old_time) >= GAME_MILLIS) {
                         current_game++;
-                        time = current_time;
+                        old_time = current_time;
                         postInvalidate();
                     }
 
