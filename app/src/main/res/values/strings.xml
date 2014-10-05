@@ -19,5 +19,6 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_connect">ConnectActivity</string>
+    <string name="title_activity_solve_it">SolveItActivity</string>
 
 </resources>
