@@ -1,20 +1,19 @@
 package com.oenik.bir.skillgame;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.view.View;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.view.MotionEvent;
 
 import java.util.Random;
 
-public class RajzolgatoView extends View {
+public class RajzolgatoView extends GameAbstract {
 
     private Paint drawPaint;
     private Paint pointPaint;
@@ -50,7 +49,8 @@ public class RajzolgatoView extends View {
         this.result_update = result_update;
     }
 
-    private void Init()
+    @Override
+    public void Init()
     {
         view_size_width = 1000;
         view_size_height = 500;
@@ -163,7 +163,8 @@ public class RajzolgatoView extends View {
         return true;
     }
 
-    private void GetResult()
+    @Override
+    public void GetResult()
     {
         Rect bounding_rect = getBoundingRect(points);
         int bounding_area = bounding_rect.width() * bounding_rect.height();

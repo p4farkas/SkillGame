@@ -10,11 +10,10 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import java.util.Random;
 
-public class SzinvalasztoView extends View {
+public class SzinvalasztoView extends GameAbstract {
 
     final int ORANGE = Color.parseColor("#ffa500");
     final int PURPLE = Color.parseColor("#663399");
@@ -36,7 +35,6 @@ public class SzinvalasztoView extends View {
     private int name_index = 0;
 
     private int current_game = 0;
-    private final int GAME_COUNT = 5;
 
     private long time = 0;
 
@@ -49,7 +47,22 @@ public class SzinvalasztoView extends View {
         Init();
     }
 
-    private void Init() {
+    //Az eredmény kiértékelése
+    @Override
+    public void GetResult() {
+        if (name_index == code_index)
+            Log.i("Szinvalaszto", "TALÁLT");
+        else
+            Log.i("Szinvalaszto", "NEM TALÁLT");
+
+        current_game++;
+        time = System.currentTimeMillis();
+        if (current_game < GAME_COUNT)
+            invalidate();
+    }
+
+    @Override
+    public void Init() {
 
         view_size_width = 1000;
         view_size_height = 500;
@@ -123,7 +136,7 @@ public class SzinvalasztoView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                getResult(); //Minden érintésnél kiértékeljük az eredményt
+                GetResult(); //Minden érintésnél kiértékeljük az eredményt
                 break;
             default:
                 return false;
@@ -151,18 +164,5 @@ public class SzinvalasztoView extends View {
         float y = view_size_height / 2;
 
         return new PointF(x, y);
-    }
-
-    //Az eredmény kiértékelése
-    private void getResult() {
-        if (name_index == code_index)
-            Log.i("Szinvalaszto", "TALÁLT");
-        else
-            Log.i("Szinvalaszto", "NEM TALÁLT");
-
-        current_game++;
-        time = System.currentTimeMillis();
-        if (current_game < GAME_COUNT)
-            invalidate();
     }
 }

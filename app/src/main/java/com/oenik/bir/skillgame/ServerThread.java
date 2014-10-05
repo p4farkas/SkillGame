@@ -19,20 +19,21 @@ class ServerThread implements Runnable {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    public static final int SERVERPORT = 4444;
+    public static int port = 4444;
     private Handler handler;
     boolean server_run = false;
     private OutputStream outstream;
     private PrintWriter printWriter;
     private static ServerThread serverThread = null;
 
-    private ServerThread() {
+    private ServerThread(int port_new) {
         handler = new Handler();
+        port = port_new;
     }
 
-    public static ServerThread getInstance() {
+    public static ServerThread getInstance(int port) {
         if (serverThread == null)
-            serverThread = new ServerThread();
+            serverThread = new ServerThread(port);
 
         return serverThread;
     }
@@ -60,8 +61,8 @@ class ServerThread implements Runnable {
     public void run() {
 
         try {
-            serverSocket = new ServerSocket(SERVERPORT);
-            Log.i("Server", "Server is listening on " + SERVERPORT);
+            serverSocket = new ServerSocket(port);
+            Log.i("Server", "Server is listening on " + port);
 
         } catch (IOException e) {
             Log.e("Server - ServerThread", e.getMessage());

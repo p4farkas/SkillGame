@@ -3,11 +3,9 @@ package com.oenik.bir.skillgame;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 
 public class MainActivity extends Activity {
@@ -21,9 +19,9 @@ public class MainActivity extends Activity {
         //TransitionDrawable transition = (TransitionDrawable)screen.getBackground();
         //transition.startTransition(500);
 
-        RelativeLayout screen = (RelativeLayout)findViewById(R.id.relative_layout_main);
-        AnimationDrawable backgroundAnimation = (AnimationDrawable) screen.getBackground();
-        backgroundAnimation.start();
+        //RelativeLayout screen = (RelativeLayout)findViewById(R.id.relative_layout_main);
+        //AnimationDrawable backgroundAnimation = (AnimationDrawable) screen.getBackground();
+        //backgroundAnimation.start();
 
 
         Button startButton = (Button) findViewById(R.id.start_button);
@@ -32,6 +30,15 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 Intent connectActivity = new Intent(MainActivity.this, ConnectActivity.class);
                 startActivity(connectActivity);
+            }
+        });
+
+        Button profileButton = (Button) findViewById(R.id.profil_button);
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profileActivity = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(profileActivity);
             }
         });
 

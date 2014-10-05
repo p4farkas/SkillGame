@@ -14,8 +14,8 @@ import java.net.Socket;
 
 public class ClientThread implements Runnable {
 
-    public static final int SERVERPORT = 4444;
-    public static final String SERVER_IP = "192.168.0.219";
+    public static int port = 4444;
+    public static String ip = "192.168.0.219";
     private Socket server_socket;
     private boolean client_run = false;
     private OutputStream outstream;
@@ -23,12 +23,14 @@ public class ClientThread implements Runnable {
 
     public static ClientThread clientThread = null;
 
-    private ClientThread() {
+    private ClientThread(String ip_new, int port_new) {
+        ip = ip_new;
+        port = port_new;
     }
 
-    public static ClientThread getInstance() {
+    public static ClientThread getInstance(String ip, int port) {
         if (clientThread == null)
-            clientThread = new ClientThread();
+            clientThread = new ClientThread(ip, port);
 
         return clientThread;
     }
@@ -56,8 +58,8 @@ public class ClientThread implements Runnable {
     @Override
     public void run() {
         try {
-            server_socket = new Socket(SERVER_IP, SERVERPORT);
-            Log.i("Client", "Connected to server: " + SERVER_IP + ":" + SERVERPORT);
+            server_socket = new Socket(ip, port);
+            Log.i("Client", "Connected to server: " + ip + ":" + port);
             client_run = true;
 
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(server_socket.getInputStream()));
