@@ -2,11 +2,11 @@ package com.oenik.bir.skillgame;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +21,6 @@ public class ConnectActivity extends Activity {
     private EditText client_port_text;
     private EditText client_ip_text;
 
-    private ProgressDialog dialog;
     private Connection connection;
 
     @Override
@@ -63,7 +62,7 @@ public class ConnectActivity extends Activity {
         }
 
         connection = new Connection(Connection.CONNECTION_TYPE.SERVER, null,
-                port, getApplicationContext());
+                port, ConnectActivity.this);
 
         //dialog = ProgressDialog.show(ConnectActivity.this, "",
         //        "Várakozás a játékostársra...", true);
@@ -79,13 +78,15 @@ public class ConnectActivity extends Activity {
         }
 
         connection = new Connection(Connection.CONNECTION_TYPE.CLIENT,
-                ip, port, getApplicationContext());
+                ip, port, ConnectActivity.this);
 
         //dialog = ProgressDialog.show(ConnectActivity.this, "",
         //        "Csatlakozás a játékostárshoz...", true);
     }
 
     public static void ShowPlayerDialog(final Bitmap bitmap, final Context context) {
+        Looper.prepare();
+
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -97,5 +98,7 @@ public class ConnectActivity extends Activity {
                 dialog.show();
             }
         });
+
+        Looper.loop();
     }
 }

@@ -8,12 +8,13 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.Charset;
 
 public class ClientThread implements Runnable {
 
@@ -69,7 +70,7 @@ public class ClientThread implements Runnable {
             Log.i("Client", "Connected to server: " + ip + ":" + port);
 
             SendImage(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.game_icon));
+                    R.drawable.anonim));
 
             client_run = true;
 
@@ -109,17 +110,12 @@ public class ClientThread implements Runnable {
         String message = "IMG:" + base64_size + ":" + comp_size;
         SendData(message);
 
-        DataOutputStream dos = new DataOutputStream(outstream);
-
         try {
-            dos.writeInt(base64_size);
-            Log.i("Client", String.valueOf(base64_size));
-            if (base64_size > 0) {
-                dos.write(image, 0, base64_size);
-                dos.writeUTF("\n");
-            }
-            dos.flush();
+            OutputStreamWriter oos=new OutputStreamWriter(outstream);
+            String d = new String(image, Charset.defaultCharset()).trim() + '\n';
+            oos.write(d);
 
+            oos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,7 +3,6 @@ package com.oenik.bir.skillgame;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 
@@ -13,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -22,7 +20,6 @@ class ServerThread implements Runnable {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     public static int port = 4444;
-    private Handler handler;
     boolean server_run = false;
     private OutputStream outstream;
     private PrintWriter printWriter;
@@ -31,9 +28,9 @@ class ServerThread implements Runnable {
     private Context context;
 
     private final String imgString = "IMG";
+    private final String playerString = "PLAY";
 
     private ServerThread(int port_new, Context context_new) {
-        handler = new Handler();
         port = port_new;
 
         context = context_new;
@@ -132,11 +129,16 @@ class ServerThread implements Runnable {
 
                         if (line.substring(0, 3).equals(imgString)) {
 
-                            Bitmap bitmap = getImage(input_stream, line);
+                            final Bitmap bitmap = getImage(input, line);
 
                             if (bitmap != null) {
+                                Log.i("Server", "Méret: " + bitmap.getWidth() + "," + bitmap.getHeight());
                                 ConnectActivity.ShowPlayerDialog(bitmap, context);
                             }
+                        }
+                        else if (line.substring(0, 4).equals(playerString))
+                        {
+                            String player_name = getLine(input).split(":")[1];
                         }
                     }
                 } catch (Exception e) {
@@ -162,15 +164,13 @@ class ServerThread implements Runnable {
         }
 
         //A kép beolvasása és Base64 dekódolása
-        private Bitmap getImage(InputStream in, String line) {
+        private Bitmap getImage(BufferedReader in, String line) {
 
             //"IMG:BASE64hossz:JPEGhossz"
 
             String[] values = line.split(":");
             int base64_length = 0;
             int jpeg_length = 0;
-
-            byte[] base_decoded = null;
 
             try {
                 base64_length = Integer.parseInt(values[1]);
@@ -180,22 +180,29 @@ class ServerThread implements Runnable {
             }
 
             try {
+                StringBuilder builder = new StringBuilder();
+                String message = "";
+                int charsRead = 0;
+                char[] buffer = new char[1024*4];
 
-                int total = 0;
-                int n = 0;
-                char[] buffer = new char[1024 * 4];
-                InputStreamReader reader = new InputStreamReader(in);
-                StringWriter writer = new StringWriter();
-                while (-1 != (n = reader.read(buffer))) {
-                    writer.write(buffer, 0, n);
-                    total += n;
-                    Log.i("Server", String.valueOf(total));
+                int length = 0;
+
+                while ((charsRead = in.read(buffer)) != -1) {
+                    message = new String(buffer).substring(0, charsRead);
+                    builder.append(message);
+                    length += charsRead;
+                    Log.i("Server", "Length: " + String.valueOf(length));
+
+                    if (length>=base64_length)
+                        break;
                 }
 
-                byte[] img_bytes = writer.toString().getBytes();
+                byte[] img_bytes = builder.toString().getBytes();
+
+                Log.i("Server", String.valueOf(img_bytes.length) + " - " + String.valueOf(base64_length));
 
                 if (base64_length == img_bytes.length) {
-                    base_decoded = Base64.decode(img_bytes, 0);
+                    byte[] base_decoded = Base64.decode(img_bytes, 0);
 
                     if (jpeg_length == base_decoded.length) {
                         return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length);
@@ -205,7 +212,8 @@ class ServerThread implements Runnable {
                 }
 
                 Log.e("getImage()", "Input reading failed");
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
             }
 
             return null;
