@@ -1,5 +1,6 @@
 package com.oenik.bir.skillgame;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -26,14 +28,20 @@ class ServerThread implements Runnable {
     private PrintWriter printWriter;
     private static ServerThread serverThread = null;
 
-    private ServerThread(int port_new) {
+    private Context context;
+
+    private final String imgString = "IMG";
+
+    private ServerThread(int port_new, Context context_new) {
         handler = new Handler();
         port = port_new;
+
+        context = context_new;
     }
 
-    public static ServerThread getInstance(int port) {
+    public static ServerThread getInstance(int port, Context context) {
         if (serverThread == null)
-            serverThread = new ServerThread(port);
+            serverThread = new ServerThread(port, context);
 
         return serverThread;
     }
@@ -100,11 +108,7 @@ class ServerThread implements Runnable {
                 final String ip = client_address[0].substring(1);
                 final String port = client_address[1];
 
-                handler.post(new Runnable() {
-                    public void run() {
-                        Log.i("Client", "Client: " + ip + port);
-                    }
-                });
+                Log.i("Client", "Client: " + ip + port);
 
                 this.input_stream = clientSocket.getInputStream();
 
@@ -124,7 +128,17 @@ class ServerThread implements Runnable {
                 try {
                     String line = getLine(input);
 
-                    Log.i("Server - CommThread (run)", "Client says: " + line);
+                    if (line != null) {
+
+                        if (line.substring(0, 3).equals(imgString)) {
+
+                            Bitmap bitmap = getImage(input_stream, line);
+
+                            if (bitmap != null) {
+                                ConnectActivity.ShowPlayerDialog(bitmap, context);
+                            }
+                        }
+                    }
                 } catch (Exception e) {
                     Log.e("Server - CommThread (run)", e.getMessage());
 
@@ -148,7 +162,7 @@ class ServerThread implements Runnable {
         }
 
         //A kép beolvasása és Base64 dekódolása
-        private Bitmap getImage(BufferedReader in, String line) {
+        private Bitmap getImage(InputStream in, String line) {
 
             //"IMG:BASE64hossz:JPEGhossz"
 
@@ -162,28 +176,40 @@ class ServerThread implements Runnable {
                 base64_length = Integer.parseInt(values[1]);
                 jpeg_length = Integer.parseInt(values[2]);
             } catch (Exception nfe) {
-                Log.e("ERROR", nfe.toString());
+                Log.e("Server", nfe.toString());
             }
 
             try {
 
-                byte[] img_bytes = in.readLine().getBytes();
+                int total = 0;
+                int n = 0;
+                char[] buffer = new char[1024 * 4];
+                InputStreamReader reader = new InputStreamReader(in);
+                StringWriter writer = new StringWriter();
+                while (-1 != (n = reader.read(buffer))) {
+                    writer.write(buffer, 0, n);
+                    total += n;
+                    Log.i("Server", String.valueOf(total));
+                }
+
+                byte[] img_bytes = writer.toString().getBytes();
 
                 if (base64_length == img_bytes.length) {
                     base_decoded = Base64.decode(img_bytes, 0);
 
                     if (jpeg_length == base_decoded.length) {
-                        return BitmapFactory.decodeByteArray(img_bytes, 0, img_bytes.length);
+                        return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length);
                     }
+                } else {
+                    Log.i("Server", "Hossz nem egyezik");
                 }
 
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+                Log.e("getImage()", "Input reading failed");
+            } catch (IOException e) {
             }
 
-            Log.e("getImage()", "Input reading failed");
-
             return null;
+
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.oenik.bir.skillgame;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -21,16 +24,20 @@ public class ClientThread implements Runnable {
     private OutputStream outstream;
     private PrintWriter printWriter;
 
+    private Context context;
+
     public static ClientThread clientThread = null;
 
-    private ClientThread(String ip_new, int port_new) {
+    private ClientThread(String ip_new, int port_new, Context context_new) {
         ip = ip_new;
         port = port_new;
+
+        context = context_new;
     }
 
-    public static ClientThread getInstance(String ip, int port) {
+    public static ClientThread getInstance(String ip, int port, Context context) {
         if (clientThread == null)
-            clientThread = new ClientThread(ip, port);
+            clientThread = new ClientThread(ip, port, context);
 
         return clientThread;
     }
@@ -60,6 +67,10 @@ public class ClientThread implements Runnable {
         try {
             server_socket = new Socket(ip, port);
             Log.i("Client", "Connected to server: " + ip + ":" + port);
+
+            SendImage(BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.game_icon));
+
             client_run = true;
 
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(server_socket.getInputStream()));
@@ -82,11 +93,37 @@ public class ClientThread implements Runnable {
     }
 
     //A kép Base64 kódolása
-    public String EncodeImage(Bitmap bitmap) {
+    public boolean SendImage(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] byteArray = stream.toByteArray();
+        long comp_size = byteArray.length;
 
-        return Base64.encodeToString(byteArray, 0);
+        byte[] image = Base64.encode(byteArray, 0);
+        int base64_size = image.length;
+
+        String player_message = "Player01";
+        SendData(player_message);
+
+        //Header
+        String message = "IMG:" + base64_size + ":" + comp_size;
+        SendData(message);
+
+        DataOutputStream dos = new DataOutputStream(outstream);
+
+        try {
+            dos.writeInt(base64_size);
+            Log.i("Client", String.valueOf(base64_size));
+            if (base64_size > 0) {
+                dos.write(image, 0, base64_size);
+                dos.writeUTF("\n");
+            }
+            dos.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 }
