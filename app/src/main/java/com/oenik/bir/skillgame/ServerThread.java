@@ -25,6 +25,8 @@ class ServerThread implements Runnable {
     private PrintWriter printWriter;
     private static ServerThread serverThread = null;
 
+    private PlayerData playerData;
+
     private Context context;
 
     private final String imgString = "IMG";
@@ -32,7 +34,6 @@ class ServerThread implements Runnable {
 
     private ServerThread(int port_new, Context context_new) {
         port = port_new;
-
         context = context_new;
     }
 
@@ -105,7 +106,7 @@ class ServerThread implements Runnable {
                 final String ip = client_address[0].substring(1);
                 final String port = client_address[1];
 
-                Log.i("Client", "Client: " + ip + port);
+                Log.i("Server", "Client: " + ip + ":" + port);
 
                 this.input_stream = clientSocket.getInputStream();
 
@@ -127,24 +128,28 @@ class ServerThread implements Runnable {
 
                     if (line != null) {
 
-                        if (line.substring(0, 3).equals(imgString)) {
+                        if (line.substring(0, 4).equals(playerString))
+                        {
+                            String player_name = line.split(":")[1];
+                            if (playerData == null) playerData = new PlayerData();
+                            playerData.setName(player_name);
+                            Log.i("Server", "Player: " + player_name);
+                        }
+                        else if (line.substring(0, 3).equals(imgString)) {
 
                             final Bitmap bitmap = getImage(input, line);
 
                             if (bitmap != null) {
                                 Log.i("Server", "Méret: " + bitmap.getWidth() + "," + bitmap.getHeight());
-                                ConnectActivity.ShowPlayerDialog(bitmap, context);
+                                if (playerData == null) playerData = new PlayerData();
+                                playerData.setPic(bitmap);
+                                ConnectActivity.ShowPlayerDialog(playerData, context);
                             }
-                        }
-                        else if (line.substring(0, 4).equals(playerString))
-                        {
-                            String player_name = getLine(input).split(":")[1];
                         }
                     }
                 } catch (Exception e) {
-                    Log.e("Server - CommThread (run)", e.getMessage());
-
-                    break;
+                    //Log.e("Server - CommThread (run)", (e.getMessage()==null) ? "Server run() error" : e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }
@@ -181,14 +186,13 @@ class ServerThread implements Runnable {
 
             try {
                 StringBuilder builder = new StringBuilder();
-                String message = "";
                 int charsRead = 0;
-                char[] buffer = new char[1024*4];
+                char[] buffer = new char[4096];
 
                 int length = 0;
 
                 while ((charsRead = in.read(buffer)) != -1) {
-                    message = new String(buffer).substring(0, charsRead);
+                    String message = new String(buffer).substring(0, charsRead);
                     builder.append(message);
                     length += charsRead;
                     Log.i("Server", "Length: " + String.valueOf(length));
@@ -218,6 +222,28 @@ class ServerThread implements Runnable {
 
             return null;
 
+        }
+    }
+
+    public class PlayerData{
+
+        private Bitmap pic;
+        private String name;
+
+        public Bitmap getPic() {
+            return pic;
+        }
+
+        public void setPic(Bitmap pic) {
+            this.pic = pic;
+        }
+
+        public String getName() {
+            return (name.equals("")) ? "AnonymPlayer" : name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 }

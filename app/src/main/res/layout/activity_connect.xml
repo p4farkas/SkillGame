@@ -22,19 +22,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:text="@string/port_number_label"
-            android:textSize="20dp"
+            android:textSize="@dimen/text_size"
             android:paddingTop="8dp"
             />
 
         <EditText
             android:id="@+id/port_number_host_input"
+            style="@style/edit_style"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
             android:hint="@string/port_number_hint"
             android:inputType="numberDecimal"
             android:digits="0123456789"
             android:maxLength="4"
-            android:textSize="20dp"
             android:layout_marginTop="50dp"
             android:layout_toRightOf="@+id/port_number_host_label"
             />
@@ -42,16 +41,8 @@
 
     <Button
         android:id="@+id/host_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/host_button"
-        android:background="#179182"
-        android:textStyle="bold"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        android:textColor="#FFFFFF"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"/>
+        style="@style/button_style"
+        android:text="@string/host_button"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -64,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:textSize="20dp"
+            android:textSize="@dimen/text_size"
             android:text="@string/ip_address_label"
             android:layout_below="@id/host_button"
             android:paddingTop="8dp"
@@ -72,12 +63,12 @@
 
         <EditText
             android:id="@+id/ip_address_input"
-            android:layout_height="wrap_content"
+            style="@style/edit_style"
             android:layout_width="200dp"
             android:hint="@string/ip_address_hint"
             android:inputType="phone"
             android:layout_marginTop="50dp"
-            android:textSize="20dp"
+            android:textSize="@dimen/text_size"
             android:layout_below="@id/host_button"
             android:layout_toRightOf="@+id/ip_address_label"
             />
@@ -95,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textSize="20dp"
+            android:textSize="@dimen/text_size"
             android:text="@string/port_number_label"
             android:layout_below="@id/ip_address_label"
             android:paddingTop="8dp"
@@ -104,14 +95,12 @@
 
         <EditText
             android:id="@+id/port_number_client_input"
-            android:layout_height="wrap_content"
+            style="@style/edit_style"
             android:hint="@string/port_number_hint"
             android:layout_width="100dp"
             android:inputType="numberDecimal"
             android:digits="0123456789"
             android:maxLength="4"
-            android:layout_marginTop="20dp"
-            android:textSize="20dp"
             android:layout_toRightOf="@+id/port_number_client_label"
             android:layout_below="@id/ip_address_label"
             />
@@ -119,19 +108,7 @@
 
     <Button
         android:id="@+id/client_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/client_button"
-        android:background="#179182"
-        android:textStyle="bold"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/host_button"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"/>
-
-
+        style="@style/button_style"
+        android:text="@string/client_button"/>
 
 </LinearLayout>

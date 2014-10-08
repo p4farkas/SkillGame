@@ -6,21 +6,31 @@ public class Connection {
 
     public static enum CONNECTION_TYPE {SERVER, CLIENT}
 
+    private Thread conn_thread = null;
+
     public Connection(CONNECTION_TYPE type, String ip, int port, Context context)
     {
         switch (type){
             case SERVER:
             {
-                Thread serverThread = new Thread(ServerThread.getInstance(port, context));
-                serverThread.start();
+                conn_thread = new Thread(ServerThread.getInstance(port, context));
+                conn_thread.start();
                 break;
             }
             case CLIENT:
             {
-                Thread client_thread = new Thread(ClientThread.getInstance(ip, port, context));
-                client_thread.start();
+                conn_thread = new Thread(ClientThread.getInstance(ip, port, context));
+                conn_thread.start();
                 break;
             }
+        }
+    }
+
+    public void CloseConnection()
+    {
+        if (conn_thread != null) {
+            conn_thread.interrupt();
+            conn_thread = null;
         }
     }
 }

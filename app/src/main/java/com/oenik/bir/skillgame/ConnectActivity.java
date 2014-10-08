@@ -2,8 +2,8 @@ package com.oenik.bir.skillgame;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,6 +22,8 @@ public class ConnectActivity extends Activity {
     private EditText client_ip_text;
 
     private Connection connection;
+
+    private static Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +66,12 @@ public class ConnectActivity extends Activity {
         connection = new Connection(Connection.CONNECTION_TYPE.SERVER, null,
                 port, ConnectActivity.this);
 
-        //dialog = ProgressDialog.show(ConnectActivity.this, "",
-        //        "Várakozás a játékostársra...", true);
+        dialog = ProgressDialog.show(ConnectActivity.this, "",
+                "Várakozás a játékostársra...", true);
     }
 
     private void ClientConnect() {
-        String ip = client_ip_text.getText().toString().equals("") ? "192.168.0.192" :
+        String ip = client_ip_text.getText().toString().equals("") ? "192.168.1.1" :
                 client_ip_text.getText().toString();
         int port = 8888;
         try {
@@ -84,18 +86,29 @@ public class ConnectActivity extends Activity {
         //        "Csatlakozás a játékostárshoz...", true);
     }
 
-    public static void ShowPlayerDialog(final Bitmap bitmap, final Context context) {
+    public static void ShowPlayerDialog(final ServerThread.PlayerData playerData, final Context context) {
         Looper.prepare();
 
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.player_dialog);
-                dialog.setTitle("Player01");
-                ImageView image = (ImageView) dialog.findViewById(R.id.image);
-                image.setImageBitmap(bitmap);
-                dialog.show();
+                dialog.dismiss();
+
+                final Dialog player_dialog = new Dialog(context);
+                player_dialog.setContentView(R.layout.player_dialog);
+                player_dialog.setTitle(playerData.getName());
+                ImageView image = (ImageView) player_dialog.findViewById(R.id.image);
+                if (playerData.getPic() != null) {
+                    image.setImageBitmap(playerData.getPic());
+                    image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            player_dialog.dismiss();
+                        }
+                    });
+                }
+                player_dialog.setCanceledOnTouchOutside(true);
+                player_dialog.show();
             }
         });
 

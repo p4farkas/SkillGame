@@ -10,11 +10,15 @@ public abstract class GameAbstract extends View {
         super(context, attrs);
     }
 
-    public abstract void GetResult();
-    public abstract void Init();
+    public abstract void GetResult(); //Végső pontszám kiszámítása
+    public abstract void Init(); //Kezdeti inicializálás
+    protected abstract void GameInit(); //Játszma inicializálás
 
-    protected final int GAME_COUNT = 5;
-    protected final long GAME_MILLIS = 1000;
-    protected long old_time = 0;
-    protected Thread time_thread;
+    protected final int GAME_COUNT = 5; //Játszmák száma
+    protected final long GAME_MILLIS = 1000; //Játszma ideje
+    protected long old_time = 0; //Játszma időméréshez a régebben mért idő
+    protected Thread time_thread; //Játszma méréshez háttérszál
+    protected int current_game = 0;
+    protected int view_size_width;
+    protected int view_size_height;
 }

@@ -77,7 +77,7 @@ public class ClientThread implements Runnable {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(server_socket.getInputStream()));
 
             while (client_run && !Thread.currentThread().isInterrupted()) {
-                bufferedReader.readLine();
+                String line = bufferedReader.readLine();
             }
 
         } catch (IOException e) {
@@ -103,8 +103,8 @@ public class ClientThread implements Runnable {
         byte[] image = Base64.encode(byteArray, 0);
         int base64_size = image.length;
 
-        String player_message = "Player01";
-        SendData(player_message);
+        String player_message = "Béla";
+        SendData("PLAY:" + player_message);
 
         //Header
         String message = "IMG:" + base64_size + ":" + comp_size;

@@ -34,27 +34,11 @@ public class SzinvalasztoView extends GameAbstract {
     private int code_index = 0;
     private int name_index = 0;
 
-    private int current_game = 0;
-
     public SzinvalasztoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.isInEditMode();
 
         Init();
-    }
-
-    //Az eredmény kiértékelése
-    @Override
-    public void GetResult() {
-        if (name_index == code_index)
-            Log.i("Szinvalaszto", "TALÁLT");
-        else
-            Log.i("Szinvalaszto", "NEM TALÁLT");
-
-        current_game++;
-        old_time = System.currentTimeMillis();
-        if (current_game < GAME_COUNT)
-            invalidate();
     }
 
     @Override
@@ -96,6 +80,11 @@ public class SzinvalasztoView extends GameAbstract {
                 } while (current_game < GAME_COUNT);
             }
         });
+    }
+
+    @Override
+    protected void GameInit() {
+        postInvalidate();
     }
 
     @Override
@@ -160,5 +149,19 @@ public class SzinvalasztoView extends GameAbstract {
         float y = view_size_height / 2;
 
         return new PointF(x, y);
+    }
+
+    //Az eredmény kiértékelése
+    @Override
+    public void GetResult() {
+        if (name_index == code_index)
+            Log.i("Szinvalaszto", "TALÁLT");
+        else
+            Log.i("Szinvalaszto", "NEM TALÁLT");
+
+        current_game++;
+        old_time = System.currentTimeMillis();
+        if (current_game < GAME_COUNT)
+            GameInit();
     }
 }

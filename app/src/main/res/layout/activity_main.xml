@@ -12,46 +12,19 @@
 
     <Button
         android:id="@+id/start_button"
-        android:text="@string/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        android:layout_marginTop="100dp"
-        android:textSize="20sp"
-        android:background="#323A45"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"/>
+        style="@style/button_main"
+        android:text="@string/start_button"/>
 
     <Button
         android:id="@+id/profil_button"
+        style="@style/button_main"
         android:text="@string/profil_button"
-        android:layout_below="@+id/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        android:layout_marginTop="30dp"
-        android:textSize="20sp"
-        android:background="#179182"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"/>
+        android:layout_below="@id/start_button"/>
 
     <Button
         android:id="@+id/info_button"
+        style="@style/button_main"
         android:text="@string/info_button"
-        android:layout_below="@+id/profil_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        android:layout_marginTop="30dp"
-        android:textSize="20sp"
-        android:background="#179182"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"/>
+        android:layout_below="@id/profil_button"/>
 
 </RelativeLayout>
