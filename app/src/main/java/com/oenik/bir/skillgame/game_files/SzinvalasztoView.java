@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame;
+package com.oenik.bir.skillgame.game_files;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,18 +19,14 @@ public class SzinvalasztoView extends GameAbstract {
     final int PURPLE = Color.parseColor("#663399");
     final int BROWN = Color.parseColor("#f4a460");
     final int PINK = Color.parseColor("#ff69b4");
+    Random r;
     private int[] color_codes = null;
     private String[] color_names = null;
-
     private int view_size_width;
     private int view_size_height;
-
     private Bitmap canvasBitmap;
     private Paint canvasPaint;
     private Paint textPaint;
-
-    Random r;
-
     private int code_index = 0;
     private int name_index = 0;
 
@@ -110,7 +106,7 @@ public class SzinvalasztoView extends GameAbstract {
         String text = color_names[name_index];
         textPaint.setColor(color_codes[code_index]);
 
-        textPaint.setTextSize(view_size_width / 9);
+        textPaint.setTextSize(view_size_width / 8);
         PointF textpoint = GetTextPoint(text);
         canvas.drawText(text, textpoint.x, textpoint.y, textPaint);
 

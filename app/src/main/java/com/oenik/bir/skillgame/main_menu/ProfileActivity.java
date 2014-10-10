@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame;
+package com.oenik.bir.skillgame.main_menu;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,21 +12,23 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.oenik.bir.skillgame.R;
+import com.oenik.bir.skillgame.Result;
+import com.oenik.bir.skillgame.ResultAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends Activity {
 
+    private final int CAMERA_REQUEST = 1;
+    private final int SELECT_PICTURE = 2;
     private ImageView userpic;
     private ImageView camera;
     private ImageView gallery;
-
     private ListView listview;
     private List<Result> results;
     private ResultAdapter adapter;
-
-    private final int CAMERA_REQUEST = 1;
-    private final int SELECT_PICTURE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

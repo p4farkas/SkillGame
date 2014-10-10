@@ -1,9 +1,10 @@
-package com.oenik.bir.skillgame;
+package com.oenik.bir.skillgame.main_menu;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,18 +13,49 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.oenik.bir.skillgame.Connection;
+import com.oenik.bir.skillgame.R;
+import com.oenik.bir.skillgame.ServerThread;
+import com.oenik.bir.skillgame.game_files.RajzolgatoActivity;
 
 public class ConnectActivity extends Activity {
 
+    private static Dialog dialog;
     private Button host_button;
     private Button client_button;
     private EditText host_port_text;
     private EditText client_port_text;
     private EditText client_ip_text;
-
     private Connection connection;
 
-    private static Dialog dialog;
+    public static void ShowPlayerDialog(final ServerThread.PlayerData playerData, final Context context) {
+        Looper.prepare();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+
+                final Dialog player_dialog = new Dialog(context);
+                player_dialog.setContentView(R.layout.player_dialog);
+                player_dialog.setTitle(playerData.getName());
+                ImageView image = (ImageView) player_dialog.findViewById(R.id.image);
+                if (playerData.getPic() != null) {
+                    image.setImageBitmap(playerData.getPic());
+                    image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            player_dialog.dismiss();
+                        }
+                    });
+                }
+                player_dialog.setCanceledOnTouchOutside(true);
+                player_dialog.show();
+            }
+        });
+
+        Looper.loop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +91,11 @@ public class ConnectActivity extends Activity {
     private void HostConnect() {
         int port = 8888;
         try {
+            Intent rajzolgatoActivity = new Intent(this, RajzolgatoActivity.class);
+            startActivity(rajzolgatoActivity);
+
             port = Integer.parseInt(host_port_text.getText().toString());
-        } catch (NumberFormatException e) {
-        }
+        } catch (NumberFormatException e) {}
 
         connection = new Connection(Connection.CONNECTION_TYPE.SERVER, null,
                 port, ConnectActivity.this);
@@ -84,34 +118,5 @@ public class ConnectActivity extends Activity {
 
         //dialog = ProgressDialog.show(ConnectActivity.this, "",
         //        "Csatlakozás a játékostárshoz...", true);
-    }
-
-    public static void ShowPlayerDialog(final ServerThread.PlayerData playerData, final Context context) {
-        Looper.prepare();
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                dialog.dismiss();
-
-                final Dialog player_dialog = new Dialog(context);
-                player_dialog.setContentView(R.layout.player_dialog);
-                player_dialog.setTitle(playerData.getName());
-                ImageView image = (ImageView) player_dialog.findViewById(R.id.image);
-                if (playerData.getPic() != null) {
-                    image.setImageBitmap(playerData.getPic());
-                    image.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            player_dialog.dismiss();
-                        }
-                    });
-                }
-                player_dialog.setCanceledOnTouchOutside(true);
-                player_dialog.show();
-            }
-        });
-
-        Looper.loop();
     }
 }

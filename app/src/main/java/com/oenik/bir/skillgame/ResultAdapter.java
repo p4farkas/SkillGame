@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -45,16 +46,19 @@ public class ResultAdapter extends BaseAdapter {
 
         Result n = getItem(i);
 
-        TextView actualView = (TextView)view;
-        actualView.setText(n.getResultString());
+        TextView actualTextView = (TextView)view.findViewById(R.id.result);
+        actualTextView.setText(n.getResultString());
+
+        ImageView actualImageView = (ImageView)view.findViewById(R.id.medal);
 
         switch(i){
-            case 0:actualView.setBackgroundColor(gold);
+            case 0:actualImageView.setImageResource(R.drawable.gold);
                 break;
-            case 1:actualView.setBackgroundColor(silver);
+            case 1:actualImageView.setImageResource(R.drawable.silver);
                 break;
-            case 2: actualView.setBackgroundColor(bronze);
+            case 2: actualImageView.setImageResource(R.drawable.bronze);
                 break;
+            default:actualImageView.setImageResource(0);
         }
 
 

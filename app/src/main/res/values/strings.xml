@@ -12,7 +12,7 @@
     <string name="host_button">Hoszt mód</string>
     <string name="ip_address_label">IP cím:</string>
     <string name="client_button">Kliens mód</string>
-    <string name="dialog_message">Verziószám: 0.2 \nSzerzők: Farkas Péter, Matyóka Roland \n\ngithub: https://github.com/p4farkas/SkillGame</string>
+    <string name="dialog_message">Verziószám: 0.5 \nSzerzők: Farkas Péter, Matyóka Roland \n\ngithub: https://github.com/p4farkas/SkillGame</string>
     <string name="dialog_title">Információ</string>
     <string name="ip_address_hint">192.168.1.1</string>
     <string name="title_activity_shooting">ShootingActivity</string>

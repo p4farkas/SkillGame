@@ -2,40 +2,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="#EBEBEB"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:layout_gravity="center"
-    android:background="#EBEBEB"
-    tools:context="com.oenik.bir.skillgame.ConnectActivity">
+    tools:context="com.oenik.bir.skillgame.main_menu.ConnectActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout"
         android:layout_gravity="center">
         <TextView
             android:id="@+id/port_number_host_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
+            android:paddingTop="8dp"
             android:text="@string/port_number_label"
             android:textSize="@dimen/text_size"
-            android:paddingTop="8dp"
             />
 
         <EditText
             android:id="@+id/port_number_host_input"
             style="@style/edit_style"
             android:layout_width="100dp"
-            android:hint="@string/port_number_hint"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:maxLength="4"
             android:layout_marginTop="50dp"
             android:layout_toRightOf="@+id/port_number_host_label"
+            android:digits="0123456789"
+            android:hint="@string/port_number_hint"
+            android:inputType="numberDecimal"
+            android:maxLength="4"
             />
         </LinearLayout>
 
@@ -48,29 +48,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/ip_address_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:textSize="@dimen/text_size"
-            android:text="@string/ip_address_label"
             android:layout_below="@id/host_button"
+            android:layout_marginTop="50dp"
             android:paddingTop="8dp"
+            android:text="@string/ip_address_label"
+            android:textSize="@dimen/text_size"
             />
 
         <EditText
             android:id="@+id/ip_address_input"
             style="@style/edit_style"
             android:layout_width="200dp"
+            android:layout_below="@id/host_button"
+            android:layout_marginTop="50dp"
+            android:layout_toRightOf="@+id/ip_address_label"
             android:hint="@string/ip_address_hint"
             android:inputType="phone"
-            android:layout_marginTop="50dp"
             android:textSize="@dimen/text_size"
-            android:layout_below="@id/host_button"
-            android:layout_toRightOf="@+id/ip_address_label"
             />
 
     </LinearLayout>
@@ -78,31 +78,31 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/port_number_client_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/text_size"
-            android:text="@string/port_number_label"
             android:layout_below="@id/ip_address_label"
+            android:layout_marginTop="20dp"
             android:paddingTop="8dp"
+            android:text="@string/port_number_label"
+            android:textSize="@dimen/text_size"
 
             />
 
         <EditText
             android:id="@+id/port_number_client_input"
             style="@style/edit_style"
-            android:hint="@string/port_number_hint"
             android:layout_width="100dp"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:maxLength="4"
-            android:layout_toRightOf="@+id/port_number_client_label"
             android:layout_below="@id/ip_address_label"
+            android:layout_toRightOf="@+id/port_number_client_label"
+            android:digits="0123456789"
+            android:hint="@string/port_number_hint"
+            android:inputType="numberDecimal"
+            android:maxLength="4"
             />
         </LinearLayout>
 

@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame;
+package com.oenik.bir.skillgame.game_files;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,7 +16,13 @@ import java.util.Random;
 public class RajzolgatoView extends GameAbstract {
 
     static final int POINT_LENGTH = 50;
-
+    float start_x = 0;
+    float start_y = 0;
+    float end_x = 0;
+    float end_y = 0;
+    Point[] points;
+    boolean[] out_indices;
+    Random r;
     private Paint drawPaint;
     private Paint pointPaint;
     private Paint out_pointPaint;
@@ -25,34 +31,19 @@ public class RajzolgatoView extends GameAbstract {
     private Canvas drawCanvas;
     private Bitmap canvasBitmap;
     private int back_color;
+    private Rect bounding_rect;
+    private Rect draw_rect;
 
-    ResultUpdate result_update;
-
-    float start_x = 0;
-    float start_y = 0;
-    float end_x = 0;
-    float end_y = 0;
-
-    Point[] points;
-    boolean[] out_indices;
-
-    Random r;
-
-    public RajzolgatoView(Context context, AttributeSet attrs){
+    public RajzolgatoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.isInEditMode();
 
         Init();
     }
 
-    public void setResult_update(ResultUpdate result_update) {
-        this.result_update = result_update;
-    }
-
     @Override
-    public void Init()
-    {
-        back_color = Color.parseColor("#D3D3D3");
+    public void Init() {
+        back_color = Color.WHITE;
 
         drawPaint = new Paint();
         drawPaint.setColor(Color.RED);
@@ -80,7 +71,7 @@ public class RajzolgatoView extends GameAbstract {
         rectPaint.setStyle(Paint.Style.STROKE);
         rectPaint.setStrokeJoin(Paint.Join.ROUND);
         rectPaint.setStrokeCap(Paint.Cap.ROUND);
-        rectPaint.setPathEffect(new DashPathEffect(new float[] {10,20}, 0));
+        rectPaint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
 
         r = new Random();
         points = new Point[POINT_LENGTH];
@@ -107,13 +98,19 @@ public class RajzolgatoView extends GameAbstract {
 
         GameInit();
 
-        time_thread.start();
+        //time_thread.start();
     }
 
     @Override
-    protected void GameInit()
-    {
+    protected void GameInit() {
         points = GetRandomPoints(r, view_size_width, view_size_height, POINT_LENGTH);
+        start_x = 0;
+        start_y = 0;
+        end_x = 0;
+        end_y = 0;
+        draw_rect = null;
+        bounding_rect = null;
+        out_indices = new boolean[POINT_LENGTH];
         postInvalidate();
     }
 
@@ -129,16 +126,15 @@ public class RajzolgatoView extends GameAbstract {
     }
 
     //A függvény a paraméterben kapott téglalapban szórja szét a random pontokat
-    private Point[] GetRandomPoints(Random r, int view_size_width, int view_size_height, int length)
-    {
+    private Point[] GetRandomPoints(Random r, int view_size_width, int view_size_height, int length) {
         Point[] points = new Point[length];
 
         //horizontális irányban egy kicsit elhúzza a random gauss
         double gauss_h;
-        for (int i=0;i<length;i++) {
+        for (int i = 0; i < length; i++) {
             gauss_h = Math.abs(r.nextGaussian() * 100);
             gauss_h = ((int) gauss_h > (view_size_width * 0.1)) ? 0 : gauss_h;
-            points[i] = new Point(r.nextInt(view_size_width - view_size_width / 2) + view_size_width / 4 + (int)gauss_h, r.nextInt(view_size_height - view_size_height / 2) + view_size_height / 4);
+            points[i] = new Point(r.nextInt(view_size_width - view_size_width / 2) + view_size_width / 4 + (int) gauss_h, r.nextInt(view_size_height - view_size_height / 2) + view_size_height / 4);
         }
 
         return points;
@@ -148,17 +144,16 @@ public class RajzolgatoView extends GameAbstract {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+        drawCanvas = canvas;
+        drawCanvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 
         //Random pontok kirajzolása
-        for(int i=0;i<POINT_LENGTH;i++)
-        {
-            canvas.drawCircle((float) points[i].x, (float) points[i].y, 5, (!out_indices[i]) ? pointPaint : out_pointPaint);
+        for (int i = 0; i < POINT_LENGTH; i++) {
+            drawCanvas.drawCircle((float) points[i].x, (float) points[i].y, 5, (!out_indices[i]) ? pointPaint : out_pointPaint);
         }
     }
 
-    public boolean onTouchEvent(MotionEvent event)
-    {
+    public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         float touchY = event.getY();
 
@@ -173,24 +168,26 @@ public class RajzolgatoView extends GameAbstract {
                 end_x = touchX;
                 end_y = touchY;
 
+                drawCanvas.drawColor(back_color);
+                break;
+            case MotionEvent.ACTION_UP:
+
                 //swapping
-                if (end_x < start_x){
+                if (end_x < start_x) {
                     float dummy = start_x;
-                    start_x= end_x;
+                    start_x = end_x;
                     end_x = dummy;
                 }
 
                 //swapping
-                if (end_y < start_y){
+                if (end_y < start_y) {
                     float dummy = start_y;
-                    start_y= end_y;
+                    start_y = end_y;
                     end_y = dummy;
                 }
 
-                drawCanvas.drawColor(back_color);
                 drawCanvas.drawRect(start_x, start_y, end_x, end_y, drawPaint);
-                break;
-            case MotionEvent.ACTION_UP:
+
                 GetResult();
                 break;
             default:
@@ -203,24 +200,23 @@ public class RajzolgatoView extends GameAbstract {
 
     //Az eredmény kiértékelése
     @Override
-    public void GetResult()
-    {
-        Rect bounding_rect = getBoundingRect(points);
+    public void GetResult() {
+        bounding_rect = getBoundingRect(points);
         int bounding_area = bounding_rect.width() * bounding_rect.height();
 
-        Rect draw_rect = new Rect((int)start_x, (int)start_y, (int)end_x, (int)end_y);
+        draw_rect = new Rect((int) start_x, (int) start_y, (int) end_x, (int) end_y);
+        int draw_area = draw_rect.width() * draw_rect.height();
 
         //Random pontokat befoglaló téglalap kirajzolása
         drawCanvas.drawRect(bounding_rect, rectPaint);
 
         //Rajzolás során a kihagyott pontok száma
         int faults = 0;
-        for(int i=0;i<POINT_LENGTH;i++)
-        {
-           if (!draw_rect.contains(points[i].x, points[i].y)) {
-               out_indices[i] = true;
-               faults++;
-           }
+        for (int i = 0; i < POINT_LENGTH; i++) {
+            if (!draw_rect.contains(points[i].x, points[i].y)) {
+                out_indices[i] = true;
+                faults++;
+            }
         }
 
         //Meghívjuk az adott interfész metódusát (értesítjük az interfész implementálóit az eredményről)
@@ -229,26 +225,61 @@ public class RajzolgatoView extends GameAbstract {
 
         current_game++;
         old_time = System.currentTimeMillis();
-        if (current_game < GAME_COUNT)
-            GameInit();
+
+        invalidate();
+
+        //Waiting...
+        new Thread(new Runnable() {
+            long start = System.currentTimeMillis();
+            boolean run = true;
+
+            @Override
+            public void run() {
+                while (run) {
+                    long current = System.currentTimeMillis();
+                    if ((current - start) >= 1000) {
+                        run = false;
+                        if (current_game < GAME_COUNT)
+                            GameInit();
+                    }
+                }
+            }
+        }).start();
     }
 
     //Visszatérési értéke a random pontok legkisebb befoglaló téglalapja
-    private Rect getBoundingRect (Point[] points)
-    {
+    private Rect getBoundingRect(Point[] points) {
         int minleft = 0;
         int mintop = 0;
         int maxright = 0;
         int maxbottom = 0;
 
-        for (int i=0;i<POINT_LENGTH;i++)
-        {
-            if (points[i].x<points[minleft].x){ minleft = i; }
-            if (points[i].y<points[mintop].y){ mintop = i; }
-            if (points[i].x>points[maxright].x){ maxright = i; }
-            if (points[i].y>points[maxbottom].y){ maxbottom = i; }
+        for (int i = 0; i < POINT_LENGTH; i++) {
+            if (points[i].x < points[minleft].x) {
+                minleft = i;
+            }
+            if (points[i].y < points[mintop].y) {
+                mintop = i;
+            }
+            if (points[i].x > points[maxright].x) {
+                maxright = i;
+            }
+            if (points[i].y > points[maxbottom].y) {
+                maxbottom = i;
+            }
         }
 
         return new Rect(points[minleft].x, points[mintop].y, points[maxright].x, points[maxbottom].y);
+    }
+
+    private int getScore(int bounding_area, int draw_area, int faults)
+    {
+        int FAULT_MUL = 10;
+
+        int score = 0;
+        if (draw_area != 0)
+
+            score = 1000 - Math.abs(draw_area-bounding_area)/100 - faults * FAULT_MUL;
+        return (score<0) ? 0 : score;
     }
 }

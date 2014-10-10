@@ -1,10 +1,14 @@
-package com.oenik.bir.skillgame;
+package com.oenik.bir.skillgame.game_files;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.oenik.bir.skillgame.R;
+
 import java.util.Random;
 
 
@@ -15,6 +19,7 @@ public class SolveItActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_solve_it);
 
+        Toast.makeText(this, "Oldd meg az egyenletet!", Toast.LENGTH_LONG).show();
 
         String[] equations = new String[] {"5*5+10=35", "56/7+6=14", "(91-27)/8=8"};
         Random r = new Random();
@@ -22,7 +27,7 @@ public class SolveItActivity extends Activity {
         char key = selected.charAt(r.nextInt(selected.length()));
 
         TextView tv = (TextView) findViewById(R.id.equation_label);
-        selected = selected.replace(key, '?');
+        selected = selected.replaceFirst(Character.toString(key),"?");
         tv.setText(selected);
 
         int solution = r.nextInt(3);

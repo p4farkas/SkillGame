@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
+import com.oenik.bir.skillgame.main_menu.ConnectActivity;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,22 +17,19 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-class ServerThread implements Runnable {
+public class ServerThread implements Runnable {
 
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
     public static int port = 4444;
-    boolean server_run = false;
-    private OutputStream outstream;
-    private PrintWriter printWriter;
     private static ServerThread serverThread = null;
-
-    private PlayerData playerData;
-
-    private Context context;
-
     private final String imgString = "IMG";
     private final String playerString = "PLAY";
+    boolean server_run = false;
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
+    private OutputStream outstream;
+    private PrintWriter printWriter;
+    private PlayerData playerData;
+    private Context context;
 
     private ServerThread(int port_new, Context context_new) {
         port = port_new;
