@@ -16,7 +16,10 @@ import android.widget.ImageView;
 import com.oenik.bir.skillgame.Connection;
 import com.oenik.bir.skillgame.R;
 import com.oenik.bir.skillgame.ServerThread;
-import com.oenik.bir.skillgame.game_files.RajzolgatoActivity;
+import com.oenik.bir.skillgame.game_files.SzinvalasztoActivity;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class ConnectActivity extends Activity {
 
@@ -91,7 +94,7 @@ public class ConnectActivity extends Activity {
     private void HostConnect() {
         int port = 8888;
         try {
-            Intent rajzolgatoActivity = new Intent(this, RajzolgatoActivity.class);
+            Intent rajzolgatoActivity = new Intent(this, SzinvalasztoActivity.class);
             startActivity(rajzolgatoActivity);
 
             port = Integer.parseInt(host_port_text.getText().toString());
@@ -102,6 +105,19 @@ public class ConnectActivity extends Activity {
 
         dialog = ProgressDialog.show(ConnectActivity.this, "",
                 "Várakozás a játékostársra...", true);
+    }
+
+    public String readInitParameters() throws IOException {
+
+        StringBuilder builder = new StringBuilder();
+        String FILENAME = "InitParameters";
+        FileInputStream fis = openFileInput(FILENAME);
+        byte[] buffer = new byte[1024]; int len;
+        while((len = fis.read(buffer)) > 0)
+            builder.append(buffer);
+        fis.close();
+
+        return builder.toString();
     }
 
     private void ClientConnect() {

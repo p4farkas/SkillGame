@@ -11,18 +11,20 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class RajzolgatoView extends GameAbstract {
 
-    static final int POINT_LENGTH = 50;
+    private static final int POINT_LENGTH = 50;
+    static Point[] points;
+    private static Random rand = new Random();
     float start_x = 0;
     float start_y = 0;
     float end_x = 0;
     float end_y = 0;
-    Point[] points;
+    Point[] actual_points;
     boolean[] out_indices;
-    Random r;
     private Paint drawPaint;
     private Paint pointPaint;
     private Paint out_pointPaint;
@@ -34,11 +36,52 @@ public class RajzolgatoView extends GameAbstract {
     private Rect bounding_rect;
     private Rect draw_rect;
 
+    private Context context;
+
     public RajzolgatoView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         this.isInEditMode();
 
         Init();
+    }
+
+    public static boolean setInitParameters(String line)
+    {
+        String[] tokens = line.split(":");
+
+        if (!tokens[0].equals(GameAbstract.RAJZOLGATO_NAME))
+            return false;
+
+        points = new Point[POINT_LENGTH*GAME_COUNT];
+
+        int point_index = 0;
+        for (int i=0;i<tokens.length;i+=2)
+        {
+            if (point_index < points.length)
+                points[point_index++] = new Point(Integer.parseInt(tokens[i]), Integer.parseInt(tokens[i+1]));
+        }
+
+        return true;
+    }
+
+    //A játék kezdeti paraméterei
+    public static String getGameInitString(int view_size_height, int view_size_width) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(GameAbstract.RAJZOLGATO_NAME);
+
+        double gauss_h;
+        for (int k=0;k<GAME_COUNT;k++) {
+            for (int i = 0; i < POINT_LENGTH; i++) {
+                gauss_h = Math.abs(rand.nextGaussian() * 100);
+                gauss_h = ((int) gauss_h > (view_size_width * 0.1)) ? 0 : gauss_h;
+                int x = rand.nextInt(view_size_width - view_size_width / 2) + view_size_width / 4 + (int) gauss_h;
+                int y = rand.nextInt(view_size_height - view_size_height / 2) + view_size_height / 4;
+                builder.append(x).append(":").append(y).append(":");
+            }
+        }
+
+        return builder.toString();
     }
 
     @Override
@@ -73,9 +116,9 @@ public class RajzolgatoView extends GameAbstract {
         rectPaint.setStrokeCap(Paint.Cap.ROUND);
         rectPaint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
 
-        r = new Random();
-        points = new Point[POINT_LENGTH];
         out_indices = new boolean[POINT_LENGTH];
+
+        actual_points = new Point[POINT_LENGTH];
 
         old_time = System.currentTimeMillis();
 
@@ -93,17 +136,20 @@ public class RajzolgatoView extends GameAbstract {
                     }
 
                 } while (current_game < GAME_COUNT);
+
+                RajzolgatoActivity.NextGame(context);
             }
         });
 
         GameInit();
 
-        //time_thread.start();
+        time_thread.start();
     }
 
     @Override
     protected void GameInit() {
-        points = GetRandomPoints(r, view_size_width, view_size_height, POINT_LENGTH);
+        int start = (current_game == 0) ? 0 : current_game*POINT_LENGTH;
+        actual_points = (Point[])Arrays.asList(points).subList(start, (current_game+1)*POINT_LENGTH).toArray();
         start_x = 0;
         start_y = 0;
         end_x = 0;
@@ -149,7 +195,7 @@ public class RajzolgatoView extends GameAbstract {
 
         //Random pontok kirajzolása
         for (int i = 0; i < POINT_LENGTH; i++) {
-            drawCanvas.drawCircle((float) points[i].x, (float) points[i].y, 5, (!out_indices[i]) ? pointPaint : out_pointPaint);
+            drawCanvas.drawCircle((float) actual_points[i].x, (float) actual_points[i].y, 5, (!out_indices[i]) ? pointPaint : out_pointPaint);
         }
     }
 
@@ -213,7 +259,7 @@ public class RajzolgatoView extends GameAbstract {
         //Rajzolás során a kihagyott pontok száma
         int faults = 0;
         for (int i = 0; i < POINT_LENGTH; i++) {
-            if (!draw_rect.contains(points[i].x, points[i].y)) {
+            if (!draw_rect.contains(actual_points[i].x, actual_points[i].y)) {
                 out_indices[i] = true;
                 faults++;
             }
@@ -241,6 +287,8 @@ public class RajzolgatoView extends GameAbstract {
                         run = false;
                         if (current_game < GAME_COUNT)
                             GameInit();
+                        else
+                            RajzolgatoActivity.NextGame(context);
                     }
                 }
             }

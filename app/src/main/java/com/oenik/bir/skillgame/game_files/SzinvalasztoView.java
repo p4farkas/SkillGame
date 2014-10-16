@@ -15,26 +15,83 @@ import java.util.Random;
 
 public class SzinvalasztoView extends GameAbstract {
 
+    private static final int COLOR_COUNT = 13;
+    private static Random rand = new Random();
+
+    private static int code_index = 0;
+    private static int name_index = 0;
+
+    private static int[] code_indices;
+    private static int[] name_indices;
+
     final int ORANGE = Color.parseColor("#ffa500");
     final int PURPLE = Color.parseColor("#663399");
     final int BROWN = Color.parseColor("#f4a460");
     final int PINK = Color.parseColor("#ff69b4");
-    Random r;
     private int[] color_codes = null;
     private String[] color_names = null;
+
     private int view_size_width;
     private int view_size_height;
     private Bitmap canvasBitmap;
     private Paint canvasPaint;
     private Paint textPaint;
-    private int code_index = 0;
-    private int name_index = 0;
+
+    private Context context;
 
     public SzinvalasztoView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         this.isInEditMode();
 
         Init();
+    }
+
+    public static boolean setInitParameters(String line) {
+
+        String[] tokens = line.split(":");
+
+        if (!tokens[0].equals(GameAbstract.SZINVALASZTO_NAME))
+            return false;
+
+        code_indices = new int[GAME_COUNT];
+        name_indices = new int[GAME_COUNT];
+
+        int index = 0;
+        int length = tokens.length;
+        for (int i=1;i<length;i+=2)
+        {
+            if (i < GAME_COUNT)
+            {
+                code_indices[index] = Integer.parseInt(tokens[i]);
+                name_indices[index++] = Integer.parseInt(tokens[i+1]);
+            }
+        }
+
+        return true;
+    }
+
+    //A játék kezdeti paraméterei
+    public static String getGameInitString() {
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(GameAbstract.SZINVALASZTO_NAME);
+        for (int i=0;i<GAME_COUNT;i++)
+        {
+            getRandomColor();
+
+            builder.append(code_index).append(":").append(name_index).append(":");
+        }
+
+        return builder.toString();
+    }
+
+    //A felirat színének meghatározása
+    public static void getRandomColor() {
+        code_index = rand.nextInt(COLOR_COUNT);
+        int max = code_index+1 >=COLOR_COUNT ? COLOR_COUNT : code_index+1;
+        int min = code_index-1 < 0 ? 0 : code_index-1;
+        name_index = rand.nextInt(max-min)+min; //A 33% valószínűség a helyes színre
     }
 
     @Override
@@ -48,8 +105,6 @@ public class SzinvalasztoView extends GameAbstract {
                 PURPLE, BROWN, PINK};
         color_names = new String[]{"Fehér", "Fekete", "Cián", "Szürke", "Sárga", "Kék",
                 "Zöld", "Magenta", "Piros", "Narancssárga", "Lila", "Barna", "Rózsaszín"};
-
-        r = new Random();
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
         canvasPaint.setColor(Color.WHITE);
@@ -74,6 +129,8 @@ public class SzinvalasztoView extends GameAbstract {
                     }
 
                 } while (current_game < GAME_COUNT);
+
+                SzinvalasztoActivity.NextGame(context);
             }
         });
     }
@@ -101,7 +158,8 @@ public class SzinvalasztoView extends GameAbstract {
         if (color_codes == null || color_names == null)
             return;
 
-        getRandomColor();
+        code_index = color_codes[current_game];
+        name_index = name_indices[current_game];
 
         String text = color_names[name_index];
         textPaint.setColor(color_codes[code_index]);
@@ -124,16 +182,6 @@ public class SzinvalasztoView extends GameAbstract {
         }
 
         return true;
-    }
-
-    //A felirat színének meghatározása
-    private void getRandomColor() {
-        int length = color_codes.length;
-
-        code_index = r.nextInt(length);
-        int max = code_index+1 >=length ? length : code_index+1;
-        int min = code_index-1 < 0 ? 0 : code_index-1;
-        name_index = r.nextInt(max-min)+min; //A 33% valószínűség a helyes színre
     }
 
     //A felirat helyének meghatározása
@@ -159,5 +207,7 @@ public class SzinvalasztoView extends GameAbstract {
         old_time = System.currentTimeMillis();
         if (current_game < GAME_COUNT)
             GameInit();
+        else
+            SzinvalasztoActivity.NextGame(context);
     }
 }

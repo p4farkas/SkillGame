@@ -6,9 +6,12 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
+import com.oenik.bir.skillgame.game_files.RajzolgatoView;
+import com.oenik.bir.skillgame.game_files.SzinvalasztoView;
 import com.oenik.bir.skillgame.main_menu.ConnectActivity;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,6 +82,8 @@ public class ServerThread implements Runnable {
 
             try {
 
+                String initdataString = getGameInitString();
+
                 clientSocket = serverSocket.accept();
 
                 CommunicationThread commThread = new CommunicationThread();
@@ -88,6 +93,24 @@ public class ServerThread implements Runnable {
                 Log.e("Server - ServerThread", e.getMessage());
             }
         }
+    }
+
+    private String getGameInitString() throws IOException {
+        StringBuilder builder = new StringBuilder();
+        builder.append("INIT_DATA:");
+        String rajzolgatoString = RajzolgatoView.getGameInitString(500, 1000);
+        String szinvalasztoString = SzinvalasztoView.getGameInitString();
+
+        builder.append(rajzolgatoString);
+        builder.append(szinvalasztoString);
+
+        String FILENAME = "InitParameters";
+        String saveThis = builder.toString();
+        FileOutputStream fos = context.openFileOutput(FILENAME, 0);
+        fos.write(saveThis.getBytes());
+        fos.close();
+
+        return builder.toString();
     }
 
     private class CommunicationThread implements Runnable {
@@ -147,8 +170,7 @@ public class ServerThread implements Runnable {
                         }
                     }
                 } catch (Exception e) {
-                    //Log.e("Server - CommThread (run)", (e.getMessage()==null) ? "Server run() error" : e.getMessage());
-                    e.printStackTrace();
+                    Log.e("Server - CommThread (run)", (e.getMessage()==null) ? "Server run() error" : e.getMessage());
                 }
             }
         }

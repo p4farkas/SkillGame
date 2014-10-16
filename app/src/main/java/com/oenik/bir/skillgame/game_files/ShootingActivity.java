@@ -2,6 +2,7 @@ package com.oenik.bir.skillgame.game_files;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,12 @@ public class ShootingActivity extends Activity {
     private View root;
     private Handler back_handler;
     private Vibrator vibrator;
+
+    public static void NextGame(Context context)
+    {
+        Intent intent = new Intent(context, SolveItActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
