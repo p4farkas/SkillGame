@@ -61,7 +61,7 @@ public class SzinvalasztoView extends GameAbstract {
         int length = tokens.length;
         for (int i=1;i<length;i+=2)
         {
-            if (i < GAME_COUNT)
+            if (i < (GAME_COUNT << 1))
             {
                 code_indices[index] = Integer.parseInt(tokens[i]);
                 name_indices[index++] = Integer.parseInt(tokens[i+1]);
@@ -75,7 +75,7 @@ public class SzinvalasztoView extends GameAbstract {
     public static String getGameInitString() {
 
         StringBuilder builder = new StringBuilder();
-        builder.append(GameAbstract.SZINVALASZTO_NAME);
+        builder.append(GameAbstract.SZINVALASZTO_NAME).append(":");
         for (int i=0;i<GAME_COUNT;i++)
         {
             getRandomColor();
@@ -97,7 +97,7 @@ public class SzinvalasztoView extends GameAbstract {
     @Override
     public void Init() {
 
-        view_size_width = 1000;
+        view_size_width = 1000; //dummy values
         view_size_height = 500;
 
         color_codes = new int[]{Color.WHITE, Color.BLACK, Color.CYAN, Color.DKGRAY,
@@ -158,13 +158,13 @@ public class SzinvalasztoView extends GameAbstract {
         if (color_codes == null || color_names == null)
             return;
 
-        code_index = color_codes[current_game];
-        name_index = name_indices[current_game];
+        code_index = color_codes[code_indices[current_game]];
+        name_index = name_indices[name_indices[current_game]];
 
         String text = color_names[name_index];
-        textPaint.setColor(color_codes[code_index]);
+        textPaint.setColor(code_index);
 
-        textPaint.setTextSize(view_size_width / 8);
+        textPaint.setTextSize(view_size_width >> 3);
         PointF textpoint = GetTextPoint(text);
         canvas.drawText(text, textpoint.x, textpoint.y, textPaint);
 
@@ -189,8 +189,8 @@ public class SzinvalasztoView extends GameAbstract {
         Rect rect = new Rect();
 
         textPaint.getTextBounds(text, 0, text.length(), rect);
-        float x = view_size_width / 2 - rect.width() / 2;
-        float y = view_size_height / 2;
+        float x = view_size_width >> 1 - rect.width() >> 1;
+        float y = view_size_height >> 1;
 
         return new PointF(x, y);
     }

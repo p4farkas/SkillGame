@@ -68,7 +68,7 @@ public class RajzolgatoView extends GameAbstract {
     //A játék kezdeti paraméterei
     public static String getGameInitString(int view_size_height, int view_size_width) {
         StringBuilder builder = new StringBuilder();
-        builder.append(GameAbstract.RAJZOLGATO_NAME);
+        builder.append(GameAbstract.RAJZOLGATO_NAME).append(":");
 
         double gauss_h;
         for (int k=0;k<GAME_COUNT;k++) {

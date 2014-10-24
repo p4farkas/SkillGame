@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.oenik.bir.skillgame.game_files.RajzolgatoView;
 import com.oenik.bir.skillgame.game_files.SzinvalasztoView;
-import com.oenik.bir.skillgame.main_menu.ConnectActivity;
+import com.oenik.bir.skillgame.main_menu.IClientConnected;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -24,6 +24,7 @@ public class ServerThread implements Runnable {
 
     public static int port = 4444;
     private static ServerThread serverThread = null;
+    private static IClientConnected client_interface;
     private final String imgString = "IMG";
     private final String playerString = "PLAY";
     boolean server_run = false;
@@ -39,6 +40,11 @@ public class ServerThread implements Runnable {
         context = context_new;
     }
 
+    public static void setClient_interface(IClientConnected _client_interface) {
+        client_interface = _client_interface;
+    }
+
+    //Singleton
     public static ServerThread getInstance(int port, Context context) {
         if (serverThread == null)
             serverThread = new ServerThread(port, context);
@@ -46,6 +52,7 @@ public class ServerThread implements Runnable {
         return serverThread;
     }
 
+    //String üzenet küldése
     public boolean SendData(String message) {
         try {
 
@@ -82,9 +89,10 @@ public class ServerThread implements Runnable {
 
             try {
 
-                String initdataString = getGameInitString();
+                String initdataString = getGameInitString(); //A játékok random kezdőértékei
 
                 clientSocket = serverSocket.accept();
+                SendData(initdataString); //Játék kezdeti paraméterek elküldése
 
                 CommunicationThread commThread = new CommunicationThread();
                 new Thread(commThread).start();
@@ -95,20 +103,32 @@ public class ServerThread implements Runnable {
         }
     }
 
+    //A játékok osztályai legenerálják a kezdőértékeket
+    //Visszatérési érték az összefűzött string
     private String getGameInitString() throws IOException {
         StringBuilder builder = new StringBuilder();
         builder.append("INIT_DATA:");
         String rajzolgatoString = RajzolgatoView.getGameInitString(500, 1000);
         String szinvalasztoString = SzinvalasztoView.getGameInitString();
+        //String solveitString
+        //String shootingString
 
-        builder.append(rajzolgatoString);
         builder.append(szinvalasztoString);
+        builder.append(rajzolgatoString);
+        //builder.append(solveitString);
+        //builder.append(shootingString);
 
-        String FILENAME = "InitParameters";
-        String saveThis = builder.toString();
-        FileOutputStream fos = context.openFileOutput(FILENAME, 0);
-        fos.write(saveThis.getBytes());
-        fos.close();
+        String filename = "InitParameters";
+        String string = builder.toString();
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(string.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return builder.toString();
     }
@@ -125,13 +145,12 @@ public class ServerThread implements Runnable {
                 String[] client_address = clientSocket.getRemoteSocketAddress()
                         .toString().split(":");
 
-                final String ip = client_address[0].substring(1);
-                final String port = client_address[1];
+                final String ip = client_address[0].substring(1); //Kliens IP
+                final String port = client_address[1]; //Kliens port
 
                 Log.i("Server", "Client: " + ip + ":" + port);
 
                 this.input_stream = clientSocket.getInputStream();
-
                 input = new BufferedReader(new InputStreamReader(input_stream));
 
                 Log.i("Server", "Receiving...");
@@ -150,31 +169,33 @@ public class ServerThread implements Runnable {
 
                     if (line != null) {
 
-                        if (line.substring(0, 4).equals(playerString))
-                        {
+                        //A játékos nevét kaptuk meg
+                        if (line.substring(0, 4).equals(playerString)) {
                             String player_name = line.split(":")[1];
                             if (playerData == null) playerData = new PlayerData();
                             playerData.setName(player_name);
                             Log.i("Server", "Player: " + player_name);
                         }
+                        //A játékos képét kaptuk meg
                         else if (line.substring(0, 3).equals(imgString)) {
 
                             final Bitmap bitmap = getImage(input, line);
 
                             if (bitmap != null) {
-                                Log.i("Server", "Méret: " + bitmap.getWidth() + "," + bitmap.getHeight());
                                 if (playerData == null) playerData = new PlayerData();
                                 playerData.setPic(bitmap);
-                                ConnectActivity.ShowPlayerDialog(playerData, context);
+                                if (client_interface != null)
+                                    client_interface.ClientConnected(playerData, context);
                             }
                         }
                     }
                 } catch (Exception e) {
-                    Log.e("Server - CommThread (run)", (e.getMessage()==null) ? "Server run() error" : e.getMessage());
+                    Log.e("Server - CommThread (run)", (e.getMessage() == null) ? "Server run() error" : e.getMessage());
                 }
             }
         }
 
+        //Egy sor kiolvasása a streamből
         private String getLine(BufferedReader in) {
 
             String in_line = null;
@@ -190,6 +211,7 @@ public class ServerThread implements Runnable {
         }
 
         //A kép beolvasása és Base64 dekódolása
+        //Az átküldött hosszparaméterek alapján állapítja meg a kép érvényességét
         private Bitmap getImage(BufferedReader in, String line) {
 
             //"IMG:BASE64hossz:JPEGhossz"
@@ -207,7 +229,7 @@ public class ServerThread implements Runnable {
 
             try {
                 StringBuilder builder = new StringBuilder();
-                int charsRead = 0;
+                int charsRead;
                 char[] buffer = new char[4096];
 
                 int length = 0;
@@ -216,37 +238,33 @@ public class ServerThread implements Runnable {
                     String message = new String(buffer).substring(0, charsRead);
                     builder.append(message);
                     length += charsRead;
-                    Log.i("Server", "Length: " + String.valueOf(length));
 
-                    if (length>=base64_length)
+                    if (length >= base64_length)
                         break;
                 }
 
                 byte[] img_bytes = builder.toString().getBytes();
 
-                Log.i("Server", String.valueOf(img_bytes.length) + " - " + String.valueOf(base64_length));
-
                 if (base64_length == img_bytes.length) {
-                    byte[] base_decoded = Base64.decode(img_bytes, 0);
+                    byte[] base_decoded = Base64.decode(img_bytes, 0); //Base64 dekódolás
 
                     if (jpeg_length == base_decoded.length) {
-                        return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length);
+                        return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length); //jpeg dekódolás
                     }
                 } else {
-                    Log.i("Server", "Hossz nem egyezik");
+                    Log.e("Server", "Hossz nem egyezik");
                 }
 
                 Log.e("getImage()", "Input reading failed");
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
             }
 
             return null;
-
         }
     }
 
-    public class PlayerData{
+    //Segédosztály a felhasználó adatainak tárolására (név+kép)
+    public class PlayerData {
 
         private Bitmap pic;
         private String name;

@@ -1,6 +1,5 @@
 package com.oenik.bir.skillgame;
 
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,10 +12,6 @@ import java.util.List;
 public class ResultAdapter extends BaseAdapter {
 
     private List<Result> results = new ArrayList<Result>();
-
-    private int gold = Color.parseColor("#ffd700");
-    private int silver = Color.parseColor("#c0c0c0");
-    private int bronze = Color.parseColor("#cd7f32");
 
     public ResultAdapter(List<Result> results) {
         this.results = results;
@@ -60,7 +55,6 @@ public class ResultAdapter extends BaseAdapter {
                 break;
             default:actualImageView.setImageResource(0);
         }
-
 
         return view;
     }

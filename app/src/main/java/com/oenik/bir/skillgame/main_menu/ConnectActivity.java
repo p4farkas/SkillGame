@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,15 +13,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.oenik.bir.skillgame.ClientThread;
 import com.oenik.bir.skillgame.Connection;
 import com.oenik.bir.skillgame.R;
 import com.oenik.bir.skillgame.ServerThread;
-import com.oenik.bir.skillgame.game_files.SzinvalasztoActivity;
+import com.oenik.bir.skillgame.game_files.GameAbstract;
+import com.oenik.bir.skillgame.game_files.RajzolgatoView;
+import com.oenik.bir.skillgame.game_files.SzinvalasztoView;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class ConnectActivity extends Activity {
+public class ConnectActivity extends Activity implements IClientConnected, IServerConnected {
 
     private static Dialog dialog;
     private Button host_button;
@@ -31,7 +34,8 @@ public class ConnectActivity extends Activity {
     private EditText client_ip_text;
     private Connection connection;
 
-    public static void ShowPlayerDialog(final ServerThread.PlayerData playerData, final Context context) {
+    //Szerver esetén ez a callback, hogy a másik játékos csatlakozott
+    public void ClientConnected(final ServerThread.PlayerData playerData, final Context context) {
         Looper.prepare();
 
         new Handler().post(new Runnable() {
@@ -39,6 +43,7 @@ public class ConnectActivity extends Activity {
             public void run() {
                 dialog.dismiss();
 
+                //Megjelenítjük a játékostár felhasználónevét és képét
                 final Dialog player_dialog = new Dialog(context);
                 player_dialog.setContentView(R.layout.player_dialog);
                 player_dialog.setTitle(playerData.getName());
@@ -53,11 +58,61 @@ public class ConnectActivity extends Activity {
                     });
                 }
                 player_dialog.setCanceledOnTouchOutside(true);
+                player_dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        try {
+                            String initString = readInitParameters();
+                            processingInitString(initString);
+                            /////////////////////
+                            //KEZDŐDHET A JÁTÉK//
+                            /////////////////////
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 player_dialog.show();
             }
         });
 
         Looper.loop();
+    }
+
+    //Kliens esetén ez a callback, hogy a másik játékos csatlakozott
+    public void ServerConnected(Context context)
+    {
+        try {
+            String initString = readInitParameters();
+            processingInitString(initString);
+            /////////////////////
+            //KEZDŐDHET A JÁTÉK//
+            /////////////////////
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void processingInitString(String line)
+    {
+        //Első játék
+        int index1 = line.indexOf(GameAbstract.RAJZOLGATO_NAME);
+        String elso = line.substring(0,index1);
+        SzinvalasztoView.setInitParameters(elso);
+
+        //Második játék
+        int index2 = line.indexOf(GameAbstract.PARBAJOZO_NAME);
+        String masodik = line.substring(index1,index2);
+        RajzolgatoView.setInitParameters(masodik);
+
+        //Harmadik játék
+        int index3 = line.indexOf(GameAbstract.SZAMOLGATO_NAME);
+        String harmadik = line.substring(index2,index3);
+        //ShootingView.setInitParameters(harmadik)
+
+        //Negyedik játék
+        String negyedik = line.substring(index3);
+        //SolvingView.setInitParameters(negyedik)
     }
 
     @Override
@@ -89,16 +144,35 @@ public class ConnectActivity extends Activity {
                 ClientConnect();
             }
         });
+
+        //Az interfész segítségével a háttérszálak értesíteni tudják ezt az activityt
+        ServerThread.setClient_interface(this);
+        ClientThread.setServer_interface(this);
     }
 
+    //Beolvassuk a játékok kezdeti paramétereit
+    public String readInitParameters() throws IOException {
+
+        StringBuilder builder = new StringBuilder();
+        String FILENAME = "InitParameters";
+        FileInputStream fis = openFileInput(FILENAME);
+        byte[] buffer = new byte[4096];
+        int len;
+        while ((len = fis.read(buffer)) > 0)
+            builder.append(new String(buffer));
+
+        fis.close();
+
+        return builder.toString().substring(10); //INIT_DATA levágása
+    }
+
+    //Szerver háttérszál indítása a megadott porton
     private void HostConnect() {
         int port = 8888;
         try {
-            Intent rajzolgatoActivity = new Intent(this, SzinvalasztoActivity.class);
-            startActivity(rajzolgatoActivity);
-
             port = Integer.parseInt(host_port_text.getText().toString());
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
 
         connection = new Connection(Connection.CONNECTION_TYPE.SERVER, null,
                 port, ConnectActivity.this);
@@ -107,19 +181,7 @@ public class ConnectActivity extends Activity {
                 "Várakozás a játékostársra...", true);
     }
 
-    public String readInitParameters() throws IOException {
-
-        StringBuilder builder = new StringBuilder();
-        String FILENAME = "InitParameters";
-        FileInputStream fis = openFileInput(FILENAME);
-        byte[] buffer = new byte[1024]; int len;
-        while((len = fis.read(buffer)) > 0)
-            builder.append(buffer);
-        fis.close();
-
-        return builder.toString();
-    }
-
+    //Kliens háttérszál indítása a megadott ip címmel és porttal
     private void ClientConnect() {
         String ip = client_ip_text.getText().toString().equals("") ? "192.168.1.1" :
                 client_ip_text.getText().toString();
