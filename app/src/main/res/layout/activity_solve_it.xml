@@ -8,46 +8,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.oenik.bir.skillgame.game_files.SolveItActivity">
 
-    <TextView
-        android:id="@+id/solve_it_score_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:gravity="center"
-        android:textSize="30sp"/>
-
-    <TextView
-        android:id="@+id/equation_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold"/>
+    <com.oenik.bir.skillgame.game_files.SolveItView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/first_answer"
-        style="@style/button_style"
-        android:layout_below="@+id/equation_label"
-        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:paddingLeft="60dp"
-        android:paddingRight="60dp"/>
+        android:paddingRight="60dp"
+        android:layout_marginTop="40dp"/>
 
     <Button
         android:id="@+id/second_answer"
-        style="@style/button_style"
-        android:layout_below="@+id/first_answer"
-        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:paddingLeft="60dp"
-        android:paddingRight="60dp"/>
+        android:paddingRight="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/first_answer"/>
 
     <Button
         android:id="@+id/third_answer"
-        style="@style/button_style"
-        android:layout_below="@+id/second_answer"
-        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:paddingLeft="60dp"
-        android:paddingRight="60dp"/>
+        android:paddingRight="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/second_answer"/>
 
 </RelativeLayout>
