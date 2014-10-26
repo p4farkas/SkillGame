@@ -37,21 +37,25 @@ public class SolveItActivity extends Activity {
         second.setOnClickListener(sPrefs.getString("secondListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
         third.setText(sPrefs.getString("thirdText", ""));
         third.setOnClickListener(sPrefs.getString("thirdListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
+
+        //Toast.makeText(this, "Oldd meg az egyenletet!", Toast.LENGTH_LONG).show();
     }
 
     View.OnClickListener onClickListenerFailed = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_LONG).show();
-            //next game
+            //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_LONG).show();
+            NextGame(SolveItActivity.this);
+
         }
     };
 
     View.OnClickListener onClickListenerPassed = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_LONG).show();
-            //next game
+            //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_LONG).show();
+            SolveItView.score++;
+            NextGame(SolveItActivity.this);
         }
     };
 

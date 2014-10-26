@@ -24,7 +24,7 @@ public class SolveItView extends GameAbstract{
     static char firstBadAnswer;
     static char secondBadAnswer;
 
-    private int score;
+    static int score;
     private SharedPreferences sPrefs;
 
     private static Random r = new Random();
@@ -112,8 +112,7 @@ public class SolveItView extends GameAbstract{
 
                 } while (current_game < GAME_COUNT);
 
-                SolveItActivity.NextGame(context);
-
+               SolveItActivity.NextGame(context);
             }
         });
 
