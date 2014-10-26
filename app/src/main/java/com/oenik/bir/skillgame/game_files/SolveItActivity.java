@@ -17,10 +17,10 @@ public class SolveItActivity extends Activity {
     private Button second;
     private Button third;
 
-    public static void NextGame(Context context)
+    public static void showResult(Context context)
     {
-        Intent intent = new Intent(context, SolveItActivity.class);
-        context.startActivity(intent);
+//        Intent intent = new Intent(context, ??? );
+//        context.startActivity(intent);
     }
 
     @Override
@@ -30,6 +30,13 @@ public class SolveItActivity extends Activity {
         first = (Button) findViewById(R.id.first_answer);
         second = (Button) findViewById(R.id.second_answer);
         third = (Button) findViewById(R.id.third_answer);
+
+        Toast.makeText(this, "Oldd meg az egyenletet!", Toast.LENGTH_LONG).show();
+
+        setButtons();
+    }
+
+    public void setButtons(){
         SharedPreferences sPrefs = getSharedPreferences("solveItButtons", Context.MODE_PRIVATE);
         first.setText(sPrefs.getString("firstText", ""));
         first.setOnClickListener(sPrefs.getString("firstListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
@@ -37,16 +44,13 @@ public class SolveItActivity extends Activity {
         second.setOnClickListener(sPrefs.getString("secondListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
         third.setText(sPrefs.getString("thirdText", ""));
         third.setOnClickListener(sPrefs.getString("thirdListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
-
-        //Toast.makeText(this, "Oldd meg az egyenletet!", Toast.LENGTH_LONG).show();
     }
 
     View.OnClickListener onClickListenerFailed = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_LONG).show();
-            NextGame(SolveItActivity.this);
-
+        SolveItView.solved = true;
         }
     };
 
@@ -55,7 +59,7 @@ public class SolveItActivity extends Activity {
         public void onClick(View view) {
             //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_LONG).show();
             SolveItView.score++;
-            NextGame(SolveItActivity.this);
+            SolveItView.solved = true;
         }
     };
 

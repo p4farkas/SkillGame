@@ -44,7 +44,7 @@ public class ShootingView extends GameAbstract {
 
     @Override
     public void Init() {
-        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.front_gun);
+        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
         GameInit();
     }
 
@@ -57,7 +57,7 @@ public class ShootingView extends GameAbstract {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gold);
+                bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.front_gun);
                 getRootView().setBackgroundColor(Color.RED);
                 startTime = System.currentTimeMillis();
                 started = true;
