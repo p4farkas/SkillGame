@@ -123,19 +123,7 @@ public class SolveItView extends GameAbstract{
                 do {
                     long current_time = System.currentTimeMillis();
 
-                    if (solved) {
-                        old_time = current_time;
-                        GameInit();
-                        postInvalidate();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((SolveItActivity)context).setButtons();
-                            }
-                        });
-                    }
-
-                    if ((current_time - old_time) >= 5000) {
+                    if (solved || (current_time - old_time) >= 5000) {
                         old_time = current_time;
                         GameInit();
                         postInvalidate();
