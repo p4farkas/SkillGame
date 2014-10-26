@@ -28,7 +28,7 @@ public class SolveItView extends GameAbstract{
     private SharedPreferences sPrefs;
 
     private static Random r = new Random();
-    Paint paint;
+    private Paint paint;
     private Context context;
 
     public SolveItView(Context context, AttributeSet attrs) {
@@ -188,6 +188,6 @@ public class SolveItView extends GameAbstract{
         canvas.drawText("Score: "+Integer.toString(score), 0, 0+paint.getTextSize(), paint);
 
         paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(question, width/2, height/4, paint);
+        canvas.drawText(question, width >> 1, height >> 2, paint);
     }
 }

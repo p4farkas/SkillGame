@@ -54,6 +54,23 @@ public class ProfileActivity extends Activity {
             }
         });
 
+        // -------------- DB local highscore
+//        DataBaseAR dbAR = new DataBaseAR(this);
+//
+//
+//        dbAR.insertHighScore(50);
+//        dbAR.insertHighScore(150);
+//        dbAR.insertHighScore(20);
+//
+//        results = new ArrayList<Result>();
+//        Cursor c = dbAR.loadHighScores();
+//        while(!c.isAfterLast()){
+//            String name = c.getString(c.getColumnIndex("score"));
+//            results.add(new Result("local", 22));
+//            c.moveToNext();
+//        }
+        //---------------------------------------------
+
         results = new ArrayList<Result>();
         results.add(new Result("Béla", 22));
         results.add(new Result("János", 20));

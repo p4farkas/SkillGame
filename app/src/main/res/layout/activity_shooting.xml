@@ -9,19 +9,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.oenik.bir.skillgame.game_files.ShootingActivity">
 
-    <ImageView
-        android:id="@+id/shooting_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/steady_man"/>
-
-    <TextView
-        android:id="@+id/shooting_score_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+   <com.oenik.bir.skillgame.game_files.ShootingView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent" />
 
 </RelativeLayout>
