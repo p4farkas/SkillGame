@@ -52,8 +52,7 @@ public class ShootingView extends GameAbstract {
         gameRound = new ArrayList<Integer>(GAME_COUNT);
 
         int length = tokens.length;
-        for (int i=1;i<length;i++)
-        {
+        for (int i = 1; i < length; i++) {
             gameRound.add(Integer.parseInt(tokens[i]));
         }
 
@@ -64,8 +63,7 @@ public class ShootingView extends GameAbstract {
 
         StringBuilder builder = new StringBuilder();
         builder.append(GameAbstract.PARBAJOZO_NAME).append(":");
-        for (int i=0;i<GAME_COUNT;i++)
-        {
+        for (int i = 0; i < GAME_COUNT; i++) {
             int delayTime = r.nextInt(15000);
             builder.append(delayTime).append(":");
         }
@@ -79,25 +77,27 @@ public class ShootingView extends GameAbstract {
 
     @Override
     public void Init() {
-//        old_time = System.currentTimeMillis();
-//        back_handler = new Handler();
-//        handler = new Handler();
-//        time_thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                do {
-//                    long current_time = started ? System.currentTimeMillis() : 0 ;
-//                    if (started && (current_time - old_time) >= 1000) {
-//                        old_time = current_time;
-//                        GameInit();
-//                        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
-//                        postInvalidate();
-//                    }
-//
-//                } while (current_game < GAME_COUNT);
-//            }
-//        });
-//        time_thread.start();
+        back_handler = new Handler();
+        handler = new Handler();
+        time_thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                do {
+                    if (started) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        GameInit();
+                        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
+                        postInvalidate();
+                    }
+                } while (current_game <= GAME_COUNT);
+                ShootingActivity.NextGame(context);
+            }
+        });
+        time_thread.start();
 
         bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
         GameInit();
@@ -106,16 +106,16 @@ public class ShootingView extends GameAbstract {
     @Override
     protected void GameInit() {
         current_game++;
+        started = false;
 
-        int delayTime = r.nextInt(15000);
+//        int delayTime = r.nextInt(15000);
 
-//        int delayTime = gameRound.get(0);
-//        gameRound.remove(0);
+        //get game parameters predefined by setInitParameters
+        int delayTime = gameRound.get(0);
+        gameRound.remove(0);
 
 
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-//        back_handler = new Handler();
-//        Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -158,6 +158,7 @@ public class ShootingView extends GameAbstract {
         super.onDraw(canvas);
         int width = getWidth();
         int height = getHeight();
+        //draw background
         int x = (width - bg.getWidth()) >> 1;
         int y = (height - bg.getHeight()) >> 1;
         canvas.drawBitmap(bg, x, y, null);
@@ -170,16 +171,18 @@ public class ShootingView extends GameAbstract {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event!=null) {
-//            if (!started) ShootingActivity.NextGame(context);
-//            else {
-//                long endTime = System.currentTimeMillis() - startTime;
-//                score = (int) endTime;
-//                ShootingActivity.NextGame(context);
-//            }
+        if (event != null) {
+            //shoot on time
             if (started) {
                 long endTime = System.currentTimeMillis() - startTime;
                 score = (int) endTime;
+            }
+            //early shoot
+            else {
+                started = false;
+                GameInit();
+                score--;
+                postInvalidate();
             }
         }
         return super.onTouchEvent(event);
