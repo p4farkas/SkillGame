@@ -115,6 +115,7 @@ public class SolveItView extends GameAbstract{
 //        }
 //        badAnswers.remove(Character.valueOf(key));
 
+        score = 0;
         old_time = System.currentTimeMillis();
         handler = new Handler();
         time_thread = new Thread(new Runnable() {
@@ -180,35 +181,35 @@ public class SolveItView extends GameAbstract{
             case 0:
                 //set solution answer for #1
                 sPrefs.edit().putString("firstText",String.valueOf(key)).apply();
-                sPrefs.edit().putString("firstListener","onClickListenerPassed").apply();
+                sPrefs.edit().putString("firstTag","PASS").apply();
 //                //set other answer for #2
                 sPrefs.edit().putString("secondText",String.valueOf(firstBadAnswer)).apply();
-                sPrefs.edit().putString("secondListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("secondTag","FAIL").apply();
 //                //set other answer for #3
                 sPrefs.edit().putString("thirdText",String.valueOf(secondBadAnswer)).apply();
-                sPrefs.edit().putString("thirdListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("thirdTag","FAIL").apply();
                 break;
             case 1:
 //                //set solution answer for #2
                 sPrefs.edit().putString("secondText",String.valueOf(key)).apply();
-                sPrefs.edit().putString("secondListener","onClickListenerPassed").apply();
+                sPrefs.edit().putString("secondTag","PASS").apply();
 //                //set other answer for #1
                 sPrefs.edit().putString("firstText",String.valueOf(firstBadAnswer)).apply();
-                sPrefs.edit().putString("firstListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("firstTag","FAIL").apply();
 //                //set other answer for #3
                 sPrefs.edit().putString("thirdText",String.valueOf(secondBadAnswer)).apply();
-                sPrefs.edit().putString("thirdListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("thirdTag","FAIL").apply();
                 break;
             case 2:
 //                //set solution answer for #3
                 sPrefs.edit().putString("thirdText",String.valueOf(key)).apply();
-                sPrefs.edit().putString("thirdListener","onClickListenerPassed").apply();
+                sPrefs.edit().putString("thirdTag","PASS").apply();
 //                //set other answer for #1
                 sPrefs.edit().putString("firstText",String.valueOf(firstBadAnswer)).apply();
-                sPrefs.edit().putString("firstListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("firstTag","FAIL").apply();
 //                //set other answer for #2
                 sPrefs.edit().putString("secondText",String.valueOf(secondBadAnswer)).apply();
-                sPrefs.edit().putString("secondListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("secondTag","FAIL").apply();
                 break;
         }
 

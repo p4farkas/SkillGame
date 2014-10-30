@@ -77,6 +77,7 @@ public class ShootingView extends GameAbstract {
 
     @Override
     public void Init() {
+        score = 0;
         back_handler = new Handler();
         handler = new Handler();
         time_thread = new Thread(new Runnable() {
