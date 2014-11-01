@@ -10,8 +10,7 @@ import com.oenik.bir.skillgame.R;
 
 public class SzinvalasztoActivity extends Activity {
 
-    public static void NextGame(Context context)
-    {
+    public static void NextGame(Context context) {
         Intent intent = new Intent(context, RajzolgatoActivity.class);
         context.startActivity(intent);
     }
@@ -21,6 +20,6 @@ public class SzinvalasztoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_szinvalaszto);
 
-        Toast.makeText(this, "Koppints, ha a felirat szövege és színe megegyezik!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, GameAbstract.SZINVALASZTO_TEXT, Toast.LENGTH_LONG).show();
     }
 }

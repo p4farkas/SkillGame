@@ -3,7 +3,7 @@
     package="com.oenik.bir.skillgame" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -43,6 +43,10 @@
         <activity
             android:name=".game_files.SzinvalasztoActivity"
             android:label="Szinvalaszto" >
+        </activity>
+        <activity
+            android:name=".ResultActivity"
+            android:label="@string/title_activity_result" >
         </activity>
     </application>
 

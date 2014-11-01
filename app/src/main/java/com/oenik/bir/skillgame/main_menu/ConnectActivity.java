@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,9 @@ import com.oenik.bir.skillgame.R;
 import com.oenik.bir.skillgame.ServerThread;
 import com.oenik.bir.skillgame.game_files.GameAbstract;
 import com.oenik.bir.skillgame.game_files.RajzolgatoView;
+import com.oenik.bir.skillgame.game_files.ShootingView;
+import com.oenik.bir.skillgame.game_files.SolveItView;
+import com.oenik.bir.skillgame.game_files.SzinvalasztoActivity;
 import com.oenik.bir.skillgame.game_files.SzinvalasztoView;
 
 import java.io.FileInputStream;
@@ -43,7 +47,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
             public void run() {
                 dialog.dismiss();
 
-                //Megjelenítjük a játékostár felhasználónevét és képét
+                //Megjelenítjük a játékostárs felhasználónevét és képét
                 final Dialog player_dialog = new Dialog(context);
                 player_dialog.setContentView(R.layout.player_dialog);
                 player_dialog.setTitle(playerData.getName());
@@ -64,6 +68,10 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
                         try {
                             String initString = readInitParameters();
                             processingInitString(initString);
+
+                            Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
+                            startActivity(intent);
+
                             /////////////////////
                             //KEZDŐDHET A JÁTÉK//
                             /////////////////////
@@ -80,11 +88,13 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
     }
 
     //Kliens esetén ez a callback, hogy a másik játékos csatlakozott
-    public void ServerConnected(Context context)
-    {
+    public void ServerConnected(Context context) {
         try {
             String initString = readInitParameters();
             processingInitString(initString);
+
+            Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
+            startActivity(intent);
             /////////////////////
             //KEZDŐDHET A JÁTÉK//
             /////////////////////
@@ -93,26 +103,26 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
         }
     }
 
-    private void processingInitString(String line)
-    {
+    private void processingInitString(String line) {
         //Első játék
         int index1 = line.indexOf(GameAbstract.RAJZOLGATO_NAME);
-        String elso = line.substring(0,index1);
+        String elso = line.substring(0, index1);
         SzinvalasztoView.setInitParameters(elso);
 
         //Második játék
         int index2 = line.indexOf(GameAbstract.PARBAJOZO_NAME);
-        String masodik = line.substring(index1,index2);
+        String masodik = line.substring(index1, index2);
         RajzolgatoView.setInitParameters(masodik);
 
         //Harmadik játék
         int index3 = line.indexOf(GameAbstract.SZAMOLGATO_NAME);
-        String harmadik = line.substring(index2,index3);
-        //ShootingView.setInitParameters(harmadik)
+        String harmadik = line.substring(index2, index3);
+        ShootingView.setInitParameters(harmadik);
 
         //Negyedik játék
-        String negyedik = line.substring(index3);
-        //SolvingView.setInitParameters(negyedik)
+        int index4 = line.indexOf("END");
+        String negyedik = line.substring(index3, index4);
+        SolveItView.setInitParameters(negyedik);
     }
 
     @Override
@@ -179,6 +189,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
 
         dialog = ProgressDialog.show(ConnectActivity.this, "",
                 "Várakozás a játékostársra...", true);
+        dialog.setCancelable(true);
     }
 
     //Kliens háttérszál indítása a megadott ip címmel és porttal

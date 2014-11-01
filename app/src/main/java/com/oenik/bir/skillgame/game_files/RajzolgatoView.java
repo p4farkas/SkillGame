@@ -36,6 +36,8 @@ public class RajzolgatoView extends GameAbstract {
     private Rect bounding_rect;
     private Rect draw_rect;
 
+    private int final_point = 0;
+
     private Context context;
 
     public RajzolgatoView(Context context, AttributeSet attrs) {
@@ -46,20 +48,19 @@ public class RajzolgatoView extends GameAbstract {
         Init();
     }
 
-    public static boolean setInitParameters(String line)
-    {
+    public static boolean setInitParameters(String line) {
         String[] tokens = line.split(":");
 
         if (!tokens[0].equals(GameAbstract.RAJZOLGATO_NAME))
             return false;
 
-        points = new Point[POINT_LENGTH*GAME_COUNT];
+        points = new Point[POINT_LENGTH * GAME_COUNT];
 
         int point_index = 0;
-        for (int i=0;i<tokens.length;i+=2)
-        {
-            if (point_index < points.length)
-                points[point_index++] = new Point(Integer.parseInt(tokens[i]), Integer.parseInt(tokens[i+1]));
+        for (int i = 1; i < tokens.length; i += 2) {
+            if (point_index < points.length) {
+                points[point_index++] = new Point(Integer.parseInt(tokens[i]), Integer.parseInt(tokens[i + 1]));
+            }
         }
 
         return true;
@@ -71,7 +72,7 @@ public class RajzolgatoView extends GameAbstract {
         builder.append(GameAbstract.RAJZOLGATO_NAME).append(":");
 
         double gauss_h;
-        for (int k=0;k<GAME_COUNT;k++) {
+        for (int k = 0; k < GAME_COUNT; k++) {
             for (int i = 0; i < POINT_LENGTH; i++) {
                 gauss_h = Math.abs(rand.nextGaussian() * 100);
                 gauss_h = ((int) gauss_h > (view_size_width * 0.1)) ? 0 : gauss_h;
@@ -137,6 +138,8 @@ public class RajzolgatoView extends GameAbstract {
 
                 } while (current_game < GAME_COUNT);
 
+                game_points[1] = final_point;
+
                 RajzolgatoActivity.NextGame(context);
             }
         });
@@ -148,8 +151,8 @@ public class RajzolgatoView extends GameAbstract {
 
     @Override
     protected void GameInit() {
-        int start = (current_game == 0) ? 0 : current_game*POINT_LENGTH;
-        actual_points = (Point[])Arrays.asList(points).subList(start, (current_game+1)*POINT_LENGTH).toArray();
+        int start = (current_game == 0) ? 0 : current_game * POINT_LENGTH;
+        actual_points = (Point[]) Arrays.asList(points).subList(start, (current_game + 1) * POINT_LENGTH).toArray();
         start_x = 0;
         start_y = 0;
         end_x = 0;
@@ -265,16 +268,14 @@ public class RajzolgatoView extends GameAbstract {
             }
         }
 
-        //Meghívjuk az adott interfész metódusát (értesítjük az interfész implementálóit az eredményről)
-        //if (result_update != null)
-        //    result_update.onResultUpdate(bounding_area, draw_area, faults);
+        final_point += getScore(bounding_area, draw_area, faults); //Hozzáadjuk a játék végső pontszámához
 
         current_game++;
         old_time = System.currentTimeMillis();
 
         invalidate();
 
-        //Waiting...
+        //Várakozás két menet között...
         new Thread(new Runnable() {
             long start = System.currentTimeMillis();
             boolean run = true;
@@ -320,14 +321,13 @@ public class RajzolgatoView extends GameAbstract {
         return new Rect(points[minleft].x, points[mintop].y, points[maxright].x, points[maxbottom].y);
     }
 
-    private int getScore(int bounding_area, int draw_area, int faults)
-    {
+    private int getScore(int bounding_area, int draw_area, int faults) {
         int FAULT_MUL = 10;
 
         int score = 0;
         if (draw_area != 0)
 
-            score = 1000 - Math.abs(draw_area-bounding_area)/100 - faults * FAULT_MUL;
-        return (score<0) ? 0 : score;
+            score = 1000 - Math.abs(draw_area - bounding_area) / 100 - faults * FAULT_MUL;
+        return (score < 0) ? 0 : score;
     }
 }

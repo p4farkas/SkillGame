@@ -37,6 +37,8 @@ public class SzinvalasztoView extends GameAbstract {
     private Paint canvasPaint;
     private Paint textPaint;
 
+    private int final_point = 0;
+
     private Context context;
 
     public SzinvalasztoView(Context context, AttributeSet attrs) {
@@ -59,12 +61,10 @@ public class SzinvalasztoView extends GameAbstract {
 
         int index = 0;
         int length = tokens.length;
-        for (int i=1;i<length;i+=2)
-        {
-            if (i < (GAME_COUNT << 1))
-            {
+        for (int i = 1; i < length; i += 2) {
+            if (i < (GAME_COUNT << 1)) {
                 code_indices[index] = Integer.parseInt(tokens[i]);
-                name_indices[index++] = Integer.parseInt(tokens[i+1]);
+                name_indices[index++] = Integer.parseInt(tokens[i + 1]);
             }
         }
 
@@ -76,8 +76,7 @@ public class SzinvalasztoView extends GameAbstract {
 
         StringBuilder builder = new StringBuilder();
         builder.append(GameAbstract.SZINVALASZTO_NAME).append(":");
-        for (int i=0;i<GAME_COUNT;i++)
-        {
+        for (int i = 0; i < GAME_COUNT; i++) {
             getRandomColor();
 
             builder.append(code_index).append(":").append(name_index).append(":");
@@ -89,9 +88,9 @@ public class SzinvalasztoView extends GameAbstract {
     //A felirat színének meghatározása
     public static void getRandomColor() {
         code_index = rand.nextInt(COLOR_COUNT);
-        int max = code_index+1 >=COLOR_COUNT ? COLOR_COUNT : code_index+1;
-        int min = code_index-1 < 0 ? 0 : code_index-1;
-        name_index = rand.nextInt(max-min)+min; //A 33% valószínűség a helyes színre
+        int max = code_index + 1 >= COLOR_COUNT ? COLOR_COUNT : code_index + 1;
+        int min = code_index - 1 < 0 ? 0 : code_index - 1;
+        name_index = rand.nextInt(max - min) + min; //A 33% valószínűség a helyes színre
     }
 
     @Override
@@ -155,11 +154,11 @@ public class SzinvalasztoView extends GameAbstract {
 
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 
-        if (color_codes == null || color_names == null)
+        if (color_codes == null || color_names == null || current_game > 4)
             return;
 
         code_index = color_codes[code_indices[current_game]];
-        name_index = name_indices[name_indices[current_game]];
+        name_index = name_indices[current_game];
 
         String text = color_names[name_index];
         textPaint.setColor(code_index);
@@ -199,7 +198,7 @@ public class SzinvalasztoView extends GameAbstract {
     @Override
     public void GetResult() {
         if (name_index == code_index)
-            Log.i("Szinvalaszto", "TALÁLT");
+            final_point += 10;
         else
             Log.i("Szinvalaszto", "NEM TALÁLT");
 
@@ -207,7 +206,9 @@ public class SzinvalasztoView extends GameAbstract {
         old_time = System.currentTimeMillis();
         if (current_game < GAME_COUNT)
             GameInit();
-        else
+        else {
+            game_points[0] = final_point;
             SzinvalasztoActivity.NextGame(context);
+        }
     }
 }

@@ -8,19 +8,33 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.oenik.bir.skillgame.R;
-
-
+import com.oenik.bir.skillgame.ResultActivity;
 
 public class SolveItActivity extends Activity {
+    View.OnClickListener onClickListenerFailed = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_LONG).show();
+            SolveItView.solved = true;
+        }
+    };
+    View.OnClickListener onClickListenerPassed = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_LONG).show();
+            SolveItView.score++;
+            SolveItView.solved = true;
+        }
+    };
     private Button first;
     private Button second;
     private Button third;
 
-    public static void showResult(Context context)
-    {
-//        Intent intent = new Intent(context, ??? );
-//        context.startActivity(intent);
+    public static void showResult(Context context) {
+        Intent intent = new Intent(context, ResultActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
@@ -31,36 +45,19 @@ public class SolveItActivity extends Activity {
         second = (Button) findViewById(R.id.second_answer);
         third = (Button) findViewById(R.id.third_answer);
 
-        Toast.makeText(this, "Oldd meg az egyenletet!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, GameAbstract.SZAMOLGATO_TEXT, Toast.LENGTH_LONG).show();
 
         setButtons();
     }
 
-    public void setButtons(){
+    public void setButtons() {
         SharedPreferences sPrefs = getSharedPreferences("solveItButtons", Context.MODE_PRIVATE);
         first.setText(sPrefs.getString("firstText", ""));
-        first.setOnClickListener(sPrefs.getString("firstListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
+        first.setOnClickListener(sPrefs.getString("firstListener", "").equals("onClickListenerPassed") ? onClickListenerPassed : onClickListenerFailed);
         second.setText(sPrefs.getString("secondText", ""));
-        second.setOnClickListener(sPrefs.getString("secondListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
+        second.setOnClickListener(sPrefs.getString("secondListener", "").equals("onClickListenerPassed") ? onClickListenerPassed : onClickListenerFailed);
         third.setText(sPrefs.getString("thirdText", ""));
-        third.setOnClickListener(sPrefs.getString("thirdListener", "") == "onClickListenerPassed" ? onClickListenerPassed : onClickListenerFailed);
+        third.setOnClickListener(sPrefs.getString("thirdListener", "").equals("onClickListenerPassed") ? onClickListenerPassed : onClickListenerFailed);
     }
-
-    View.OnClickListener onClickListenerFailed = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_LONG).show();
-        SolveItView.solved = true;
-        }
-    };
-
-    View.OnClickListener onClickListenerPassed = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_LONG).show();
-            SolveItView.score++;
-            SolveItView.solved = true;
-        }
-    };
 
 }

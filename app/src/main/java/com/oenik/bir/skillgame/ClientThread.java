@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
+import com.oenik.bir.skillgame.game_files.GameAbstract;
 import com.oenik.bir.skillgame.main_menu.IServerConnected;
 
 import java.io.BufferedReader;
@@ -20,12 +21,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.Charset;
 
-public class ClientThread implements Runnable {
+public class ClientThread extends ThreadAbstract {
 
     public static int port = 4444;
     public static String ip = "192.168.0.219";
     public static ClientThread clientThread = null;
     private static IServerConnected server_interface;
+    private final String pointString = "POINT";
     private Socket server_socket;
     private boolean client_run = false;
     private OutputStream outstream;
@@ -52,7 +54,7 @@ public class ClientThread implements Runnable {
     }
 
     //String üzenet küldése
-    public boolean SendData(String message) {
+    public boolean SendMessage(String message) {
         try {
 
             if (outstream == null && server_socket != null) {
@@ -88,8 +90,13 @@ public class ClientThread implements Runnable {
             String line = "";
             while (client_run && !Thread.currentThread().isInterrupted()) {
                 line = bufferedReader.readLine();
-                if (setGameInitString(line))
-                {
+
+                if (line.substring(0, 5).equals(pointString)) {
+                    int point = Integer.parseInt(line.substring(6));
+                    ResultActivity.getFinalPoint(point);
+
+                    SendMessage("POINT:" + GameAbstract.getFinalPoint());
+                } else if (setGameInitString(line)) {
                     if (server_interface != null)
                         server_interface.ServerConnected(context);
                 }
@@ -97,14 +104,6 @@ public class ClientThread implements Runnable {
 
         } catch (IOException e) {
             Log.e("Client", e.getMessage());
-        } finally {
-            if (server_socket != null) {
-                try {
-                    server_socket.close();
-                } catch (IOException e) {
-                    Log.i("Client", e.getMessage());
-                }
-            }
         }
     }
 
@@ -134,11 +133,11 @@ public class ClientThread implements Runnable {
 
         //A játékos neve
         String player_message = "Béla";
-        SendData("PLAY:" + player_message);
+        SendMessage("PLAY:" + player_message);
 
         //Header
         String message = "IMG:" + base64_size + ":" + comp_size;
-        SendData(message);
+        SendMessage(message);
 
         try {
             OutputStreamWriter oos = new OutputStreamWriter(outstream);

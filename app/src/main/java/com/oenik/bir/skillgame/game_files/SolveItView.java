@@ -11,28 +11,23 @@ import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
-public class SolveItView extends GameAbstract{
+public class SolveItView extends GameAbstract {
 
-    static final String[] equations = new String[] {"5*5+10=35", "56/7+6=14", "(91-27)/8=8"};
+    static final String[] equations = new String[]{"5*5+10=35", "56/7+6=14", "(91-27)/8=8"};
     static final List<Character> badAnswers = new ArrayList<Character>();
     static String selected;
-    private String question;
-
-    private static List<Integer> gameRound;
-
     static int selectedNumber;
     static char key;
     static char firstBadAnswer;
     static char secondBadAnswer;
-
     static boolean solved = false;
     static int score;
+    private static List<Integer> gameRound;
+    private static Random r = new Random();
+    private String question;
     private SharedPreferences sPrefs;
     private Handler handler;
-
-    private static Random r = new Random();
     private Paint paint;
     private Context context;
 
@@ -54,8 +49,7 @@ public class SolveItView extends GameAbstract{
         gameRound = new ArrayList<Integer>(GAME_COUNT);
 
         int length = tokens.length;
-        for (int i=1;i<length;i++)
-        {
+        for (int i = 1; i < length; i++) {
             gameRound.add(Integer.parseInt(tokens[i]));
         }
 
@@ -66,8 +60,7 @@ public class SolveItView extends GameAbstract{
 
         StringBuilder builder = new StringBuilder();
         builder.append(GameAbstract.SZAMOLGATO_NAME).append(":");
-        for (int i=0;i<GAME_COUNT;i++)
-        {
+        for (int i = 0; i < GAME_COUNT; i++) {
             //equation and solution selection
             selectedNumber = r.nextInt(equations.length);
             selected = equations[selectedNumber];
@@ -80,8 +73,8 @@ public class SolveItView extends GameAbstract{
             badAnswers.add('-');
             badAnswers.add('(');
             badAnswers.add(')');
-            for (int j=0; j<10; j++){
-                badAnswers.add(Character.forDigit(i,10));
+            for (int j = 0; j < 10; j++) {
+                badAnswers.add(Character.forDigit(i, 10));
             }
             badAnswers.remove(Character.valueOf(key));
             int badAnswerNumber1 = r.nextInt(badAnswers.size());
@@ -130,7 +123,7 @@ public class SolveItView extends GameAbstract{
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                ((SolveItActivity)context).setButtons();
+                                ((SolveItActivity) context).setButtons();
                             }
                         });
                     }
@@ -176,39 +169,39 @@ public class SolveItView extends GameAbstract{
 
         //random order
         int solution = r.nextInt(3);
-        switch(solution) {
+        switch (solution) {
             case 0:
                 //set solution answer for #1
-                sPrefs.edit().putString("firstText",String.valueOf(key)).apply();
-                sPrefs.edit().putString("firstListener","onClickListenerPassed").apply();
+                sPrefs.edit().putString("firstText", String.valueOf(key)).apply();
+                sPrefs.edit().putString("firstListener", "onClickListenerPassed").apply();
 //                //set other answer for #2
-                sPrefs.edit().putString("secondText",String.valueOf(firstBadAnswer)).apply();
-                sPrefs.edit().putString("secondListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("secondText", String.valueOf(firstBadAnswer)).apply();
+                sPrefs.edit().putString("secondListener", "onClickListenerFailed").apply();
 //                //set other answer for #3
-                sPrefs.edit().putString("thirdText",String.valueOf(secondBadAnswer)).apply();
-                sPrefs.edit().putString("thirdListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("thirdText", String.valueOf(secondBadAnswer)).apply();
+                sPrefs.edit().putString("thirdListener", "onClickListenerFailed").apply();
                 break;
             case 1:
 //                //set solution answer for #2
-                sPrefs.edit().putString("secondText",String.valueOf(key)).apply();
-                sPrefs.edit().putString("secondListener","onClickListenerPassed").apply();
+                sPrefs.edit().putString("secondText", String.valueOf(key)).apply();
+                sPrefs.edit().putString("secondListener", "onClickListenerPassed").apply();
 //                //set other answer for #1
-                sPrefs.edit().putString("firstText",String.valueOf(firstBadAnswer)).apply();
-                sPrefs.edit().putString("firstListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("firstText", String.valueOf(firstBadAnswer)).apply();
+                sPrefs.edit().putString("firstListener", "onClickListenerFailed").apply();
 //                //set other answer for #3
-                sPrefs.edit().putString("thirdText",String.valueOf(secondBadAnswer)).apply();
-                sPrefs.edit().putString("thirdListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("thirdText", String.valueOf(secondBadAnswer)).apply();
+                sPrefs.edit().putString("thirdListener", "onClickListenerFailed").apply();
                 break;
             case 2:
 //                //set solution answer for #3
-                sPrefs.edit().putString("thirdText",String.valueOf(key)).apply();
-                sPrefs.edit().putString("thirdListener","onClickListenerPassed").apply();
+                sPrefs.edit().putString("thirdText", String.valueOf(key)).apply();
+                sPrefs.edit().putString("thirdListener", "onClickListenerPassed").apply();
 //                //set other answer for #1
-                sPrefs.edit().putString("firstText",String.valueOf(firstBadAnswer)).apply();
-                sPrefs.edit().putString("firstListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("firstText", String.valueOf(firstBadAnswer)).apply();
+                sPrefs.edit().putString("firstListener", "onClickListenerFailed").apply();
 //                //set other answer for #2
-                sPrefs.edit().putString("secondText",String.valueOf(secondBadAnswer)).apply();
-                sPrefs.edit().putString("secondListener","onClickListenerFailed").apply();
+                sPrefs.edit().putString("secondText", String.valueOf(secondBadAnswer)).apply();
+                sPrefs.edit().putString("secondListener", "onClickListenerFailed").apply();
                 break;
         }
 
@@ -226,7 +219,7 @@ public class SolveItView extends GameAbstract{
         paint.setColor(Color.BLACK);
         paint.setTextSize(18);
         paint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("Score: "+Integer.toString(score), 0, 0+paint.getTextSize(), paint);
+        canvas.drawText("Score: " + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
 
         paint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(question, width >> 1, height >> 2, paint);

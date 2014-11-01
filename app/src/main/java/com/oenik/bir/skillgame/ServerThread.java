@@ -7,6 +7,8 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.oenik.bir.skillgame.game_files.RajzolgatoView;
+import com.oenik.bir.skillgame.game_files.ShootingView;
+import com.oenik.bir.skillgame.game_files.SolveItView;
 import com.oenik.bir.skillgame.game_files.SzinvalasztoView;
 import com.oenik.bir.skillgame.main_menu.IClientConnected;
 
@@ -20,13 +22,14 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerThread implements Runnable {
+public class ServerThread extends ThreadAbstract {
 
     public static int port = 4444;
     private static ServerThread serverThread = null;
     private static IClientConnected client_interface;
     private final String imgString = "IMG";
     private final String playerString = "PLAY";
+    private final String pointString = "POINT";
     boolean server_run = false;
     private ServerSocket serverSocket;
     private Socket clientSocket;
@@ -53,7 +56,7 @@ public class ServerThread implements Runnable {
     }
 
     //String üzenet küldése
-    public boolean SendData(String message) {
+    public boolean SendMessage(String message) {
         try {
 
             if (outstream == null && clientSocket != null) {
@@ -92,7 +95,7 @@ public class ServerThread implements Runnable {
                 String initdataString = getGameInitString(); //A játékok random kezdőértékei
 
                 clientSocket = serverSocket.accept();
-                SendData(initdataString); //Játék kezdeti paraméterek elküldése
+                SendMessage(initdataString); //Játék kezdeti paraméterek elküldése
 
                 CommunicationThread commThread = new CommunicationThread();
                 new Thread(commThread).start();
@@ -110,13 +113,14 @@ public class ServerThread implements Runnable {
         builder.append("INIT_DATA:");
         String rajzolgatoString = RajzolgatoView.getGameInitString(500, 1000);
         String szinvalasztoString = SzinvalasztoView.getGameInitString();
-        //String solveitString
-        //String shootingString
+        String shootingString = ShootingView.getGameInitString();
+        String solveitString = SolveItView.getGameInitString();
 
         builder.append(szinvalasztoString);
         builder.append(rajzolgatoString);
-        //builder.append(solveitString);
-        //builder.append(shootingString);
+        builder.append(shootingString);
+        builder.append(solveitString);
+        builder.append("END");
 
         String filename = "InitParameters";
         String string = builder.toString();
@@ -187,6 +191,9 @@ public class ServerThread implements Runnable {
                                 if (client_interface != null)
                                     client_interface.ClientConnected(playerData, context);
                             }
+                        } else if (line.substring(0, 5).equals(pointString)) {
+                            int point = Integer.parseInt(line.substring(6));
+                            ResultActivity.getFinalPoint(point);
                         }
                     }
                 } catch (Exception e) {

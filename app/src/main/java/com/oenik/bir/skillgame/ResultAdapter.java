@@ -41,19 +41,23 @@ public class ResultAdapter extends BaseAdapter {
 
         Result n = getItem(i);
 
-        TextView actualTextView = (TextView)view.findViewById(R.id.result);
+        TextView actualTextView = (TextView) view.findViewById(R.id.result);
         actualTextView.setText(n.getResultString());
 
-        ImageView actualImageView = (ImageView)view.findViewById(R.id.medal);
+        ImageView actualImageView = (ImageView) view.findViewById(R.id.medal);
 
-        switch(i){
-            case 0:actualImageView.setImageResource(R.drawable.gold);
+        switch (i) {
+            case 0:
+                actualImageView.setImageResource(R.drawable.gold);
                 break;
-            case 1:actualImageView.setImageResource(R.drawable.silver);
+            case 1:
+                actualImageView.setImageResource(R.drawable.silver);
                 break;
-            case 2: actualImageView.setImageResource(R.drawable.bronze);
+            case 2:
+                actualImageView.setImageResource(R.drawable.bronze);
                 break;
-            default:actualImageView.setImageResource(0);
+            default:
+                actualImageView.setImageResource(0);
         }
 
         return view;

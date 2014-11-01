@@ -9,8 +9,7 @@ public class Result {
         this.result = result;
     }
 
-    public String getResultString()
-    {
+    public String getResultString() {
         return result + " pont (" + "2012.08.31. 17:15)";
     }
 
