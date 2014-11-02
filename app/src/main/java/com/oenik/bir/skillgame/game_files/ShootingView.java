@@ -176,13 +176,13 @@ public class ShootingView extends GameAbstract {
             //shoot on time
             if (started) {
                 long endTime = System.currentTimeMillis() - startTime;
-                score = (int) endTime;
+                score = 1000 - (int) endTime;
             }
-            //early shoot
+            //early shot
             else {
                 started = false;
                 GameInit();
-                score--;
+                score-=700;
                 postInvalidate();
             }
         }

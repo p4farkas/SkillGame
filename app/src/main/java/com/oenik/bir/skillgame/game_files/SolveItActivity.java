@@ -28,10 +28,13 @@ public class SolveItActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_solve_it);
         first = (Button) findViewById(R.id.first_answer);
+        first.setOnClickListener(onClickListenerSolveIt);
         second = (Button) findViewById(R.id.second_answer);
+        second.setOnClickListener(onClickListenerSolveIt);
         third = (Button) findViewById(R.id.third_answer);
+        third.setOnClickListener(onClickListenerSolveIt);
 
-        Toast.makeText(this, "Oldd meg az egyenletet!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, GameAbstract.SZAMOLGATO_TEXT, Toast.LENGTH_LONG).show();
 
         setButtons();
     }
@@ -40,25 +43,22 @@ public class SolveItActivity extends Activity {
         SharedPreferences sPrefs = getSharedPreferences("solveItButtons", Context.MODE_PRIVATE);
         first.setText(sPrefs.getString("firstText", ""));
         first.setTag(sPrefs.getString("firstTag", ""));
-        first.setOnClickListener(onClickListenerSolveIt);
         second.setText(sPrefs.getString("secondText", ""));
         second.setTag(sPrefs.getString("secondTag", ""));
-        second.setOnClickListener(onClickListenerSolveIt);
         third.setText(sPrefs.getString("thirdText", ""));
         third.setTag(sPrefs.getString("thirdTag", ""));
-        third.setOnClickListener(onClickListenerSolveIt);
     }
 
     View.OnClickListener onClickListenerSolveIt = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (view.getTag()=="PASS") {
-                //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_SHORT).show();
                 SolveItView.score+=10;
             }
             else {
-                //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_LONG).show();
-                SolveItView.score-=2;
+                //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_SHORT).show();
+                SolveItView.score-=5;
             }
             SolveItView.solved = true;
         }
