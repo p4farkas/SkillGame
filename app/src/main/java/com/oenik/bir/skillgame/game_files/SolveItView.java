@@ -51,12 +51,12 @@ public class SolveItView extends GameAbstract{
         if (!tokens[0].equals(GameAbstract.SZAMOLGATO_NAME))
             return false;
 
-        gameRound = new ArrayList<Integer>(GAME_COUNT);
+        gameRound = new ArrayList<Integer>(GAME_COUNT<<2);
 
         int length = tokens.length;
         for (int i=1;i<length;i++)
         {
-            gameRound.add(Integer.parseInt(tokens[i]));
+            gameRound.add(Integer.valueOf(tokens[i].charAt(0)));
         }
 
         return true;
@@ -81,7 +81,7 @@ public class SolveItView extends GameAbstract{
             badAnswers.add('(');
             badAnswers.add(')');
             for (int j=0; j<10; j++){
-                badAnswers.add(Character.forDigit(i,10));
+                badAnswers.add(Character.forDigit(j,10));
             }
             badAnswers.remove(Character.valueOf(key));
             int badAnswerNumber1 = r.nextInt(badAnswers.size());
@@ -161,7 +161,7 @@ public class SolveItView extends GameAbstract{
 //        int badAnswerNumber2 = r.nextInt(badAnswers.size());
 //        secondBadAnswer = badAnswers.get(badAnswerNumber2);
 
-        selectedNumber = gameRound.get(0);
+        selectedNumber = gameRound.get(0)-48;
         gameRound.remove(0);
         selected = equations[selectedNumber];
         int a = gameRound.get(0);
