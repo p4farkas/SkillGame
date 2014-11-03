@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.oenik.bir.skillgame.game_files.GameAbstract;
+import com.oenik.bir.skillgame.main_menu.DataBaseAR;
 
 public class ResultActivity extends Activity {
 
@@ -29,6 +30,9 @@ public class ResultActivity extends Activity {
 
         final_point = GameAbstract.getFinalPoint();
         pointtext.setText("Pista: " + String.valueOf(final_point));
+
+        DataBaseAR dbAR = new DataBaseAR(this);
+        dbAR.insertHighScore(final_point);
 
         Connection.SendMessage("POINT:" + final_point);
     }

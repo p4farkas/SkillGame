@@ -72,7 +72,7 @@ public class ShootingView extends GameAbstract {
 
     @Override
     public void GetResult() {
-
+        game_points[3]=score;
     }
 
     @Override
@@ -95,6 +95,7 @@ public class ShootingView extends GameAbstract {
                         postInvalidate();
                     }
                 } while (current_game <= GAME_COUNT);
+                GetResult();
                 ShootingActivity.NextGame(context);
             }
         });

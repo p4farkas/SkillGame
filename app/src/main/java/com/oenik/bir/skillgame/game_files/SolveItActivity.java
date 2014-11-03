@@ -8,8 +8,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import com.oenik.bir.skillgame.R;
 
+import com.oenik.bir.skillgame.R;
+import com.oenik.bir.skillgame.ResultActivity;
 
 
 public class SolveItActivity extends Activity {
@@ -17,10 +18,9 @@ public class SolveItActivity extends Activity {
     private Button second;
     private Button third;
 
-    public static void showResult(Context context)
-    {
-//        Intent intent = new Intent(context, ??? );
-//        context.startActivity(intent);
+    public static void showResult(Context context) {
+        Intent intent = new Intent(context, ResultActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class SolveItActivity extends Activity {
         setButtons();
     }
 
-    public void setButtons(){
+    public void setButtons() {
         SharedPreferences sPrefs = getSharedPreferences("solveItButtons", Context.MODE_PRIVATE);
         first.setText(sPrefs.getString("firstText", ""));
         first.setTag(sPrefs.getString("firstTag", ""));
@@ -52,18 +52,16 @@ public class SolveItActivity extends Activity {
     View.OnClickListener onClickListenerSolveIt = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (view.getTag()=="PASS") {
+            if (view.getTag() == "PASS") {
                 //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_SHORT).show();
-                SolveItView.score+=10;
-            }
-            else {
+                SolveItView.score += 10;
+            } else {
                 //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_SHORT).show();
-                SolveItView.score-=5;
+                SolveItView.score -= 5;
             }
             SolveItView.solved = true;
         }
     };
-
 
 
 }
