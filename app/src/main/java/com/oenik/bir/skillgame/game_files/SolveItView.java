@@ -95,7 +95,7 @@ public class SolveItView extends GameAbstract {
 
     @Override
     public void GetResult() {
-        game_points[4] = score;
+        game_points[3] = score;
     }
 
     @Override

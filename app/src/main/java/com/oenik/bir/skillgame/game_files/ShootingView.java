@@ -72,7 +72,7 @@ public class ShootingView extends GameAbstract {
 
     @Override
     public void GetResult() {
-        game_points[3]=score;
+        game_points[2]=score;
     }
 
     @Override
