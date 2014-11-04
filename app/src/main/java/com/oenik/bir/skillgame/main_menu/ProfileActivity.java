@@ -55,27 +55,22 @@ public class ProfileActivity extends Activity {
         });
 
         // -------------- DB local highscore
-//        DataBaseAR dbAR = new DataBaseAR(this);
-//
-//
-//        dbAR.insertHighScore(50);
-//        dbAR.insertHighScore(150);
-//        dbAR.insertHighScore(20);
-//
-//        results = new ArrayList<Result>();
-//        Cursor c = dbAR.loadHighScores();
-//        while(!c.isAfterLast()){
-//            String name = c.getString(c.getColumnIndex("score"));
-//            results.add(new Result("local", 22));
-//            c.moveToNext();
-//        }
-        //---------------------------------------------
+        DataBaseAR dbAR = new DataBaseAR(this);
 
         results = new ArrayList<Result>();
-        results.add(new Result("Béla", 22));
-        results.add(new Result("János", 20));
-        results.add(new Result("Ferenc", 12));
-        results.add(new Result("István", 9));
+        Cursor c = dbAR.loadHighScores();
+        while(!c.isAfterLast()){
+            String score = c.getString(c.getColumnIndex("score"));
+            results.add(new Result("local", Integer.valueOf(score)));
+            c.moveToNext();
+        }
+        //---------------------------------------------
+
+//        results = new ArrayList<Result>();
+//        results.add(new Result("Béla", 22));
+//        results.add(new Result("János", 20));
+//        results.add(new Result("Ferenc", 12));
+//        results.add(new Result("István", 9));
 
         adapter = new ResultAdapter(results);
         listview = (ListView) findViewById(R.id.list_results);

@@ -18,7 +18,7 @@ public class SolveItActivity extends Activity {
     private Button second;
     private Button third;
 
-    public static void showResult(Context context) {
+    public static void ShowResult(Context context) {
         Intent intent = new Intent(context, ResultActivity.class);
         context.startActivity(intent);
     }

@@ -135,6 +135,7 @@ public class SolveItView extends GameAbstract {
 
                 } while (current_game < GAME_COUNT);
                 GetResult();
+                SolveItActivity.ShowResult(context);
             }
         });
         time_thread.start();
