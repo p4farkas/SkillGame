@@ -93,7 +93,7 @@ public class ShootingView extends GameAbstract {
                         bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
                         postInvalidate();
                     }
-                } while (current_game <= GAME_COUNT);
+                } while (current_game < GAME_COUNT);
                 GetResult();
                 ShootingActivity.NextGame(context);
             }

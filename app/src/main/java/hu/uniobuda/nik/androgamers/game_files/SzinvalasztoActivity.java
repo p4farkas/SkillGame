@@ -1,18 +1,21 @@
 package hu.uniobuda.nik.androgamers.game_files;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import hu.uniobuda.nik.androgamers.R;
 
-public class SzinvalasztoActivity extends Activity {
+interface INextGame{
+    void NextGame();
+}
 
-    public static void NextGame(Context context) {
-        Intent intent = new Intent(context, RajzolgatoActivity.class);
-        context.startActivity(intent);
+public class SzinvalasztoActivity extends Activity implements INextGame {
+
+    public void NextGame() {
+        Intent intent = new Intent(SzinvalasztoActivity.this, RajzolgatoActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -20,6 +23,7 @@ public class SzinvalasztoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_szinvalaszto);
 
+        SzinvalasztoView.setNext_game(this);
         Toast.makeText(this, GameAbstract.SZINVALASZTO_TEXT, Toast.LENGTH_LONG).show();
     }
 }

@@ -21,17 +21,17 @@ import java.nio.charset.Charset;
 import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
 import hu.uniobuda.nik.androgamers.main_menu.IServerConnected;
 
-public class ClientThread extends ThreadAbstract {
+public class ClientThread implements Runnable {
 
     public static int port = 4444;
     public static String ip = "192.168.0.219";
     public static ClientThread clientThread = null;
     private static IServerConnected server_interface;
+    private static Socket server_socket;
+    private static OutputStream outstream;
+    private static PrintWriter printWriter;
     private final String pointString = "POINT";
-    private Socket server_socket;
     private boolean client_run = false;
-    private OutputStream outstream;
-    private PrintWriter printWriter;
     private Context context;
 
     private ClientThread(String ip_new, int port_new, Context context_new) {
@@ -54,7 +54,7 @@ public class ClientThread extends ThreadAbstract {
     }
 
     //String üzenet küldése
-    public boolean SendMessage(String message) {
+    public static boolean SendMessage(String message) {
         try {
 
             if (outstream == null && server_socket != null) {
@@ -81,7 +81,7 @@ public class ClientThread extends ThreadAbstract {
             Log.i("Client", "Connected to server: " + ip + ":" + port);
 
             SendImage(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.anonim)); //Kép elküldése
+                    R.drawable.spongebob)); //Kép elküldése
 
             client_run = true;
 

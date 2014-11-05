@@ -23,22 +23,19 @@ public class SzinvalasztoView extends GameAbstract {
 
     private static int[] code_indices;
     private static int[] name_indices;
-
+    private static INextGame next_game;
     final int ORANGE = Color.parseColor("#ffa500");
     final int PURPLE = Color.parseColor("#663399");
     final int BROWN = Color.parseColor("#f4a460");
     final int PINK = Color.parseColor("#ff69b4");
     private int[] color_codes = null;
     private String[] color_names = null;
-
     private int view_size_width;
     private int view_size_height;
     private Bitmap canvasBitmap;
     private Paint canvasPaint;
     private Paint textPaint;
-
     private int final_point = 0;
-
     private Context context;
 
     public SzinvalasztoView(Context context, AttributeSet attrs) {
@@ -47,6 +44,10 @@ public class SzinvalasztoView extends GameAbstract {
         this.isInEditMode();
 
         Init();
+    }
+
+    public static void setNext_game(INextGame _next_game) {
+        next_game = _next_game;
     }
 
     public static boolean setInitParameters(String line) {
@@ -129,7 +130,8 @@ public class SzinvalasztoView extends GameAbstract {
 
                 } while (current_game < GAME_COUNT);
 
-                SzinvalasztoActivity.NextGame(context);
+                if (next_game != null)
+                    next_game.NextGame();
             }
         });
     }
@@ -188,7 +190,7 @@ public class SzinvalasztoView extends GameAbstract {
         Rect rect = new Rect();
 
         textPaint.getTextBounds(text, 0, text.length(), rect);
-        float x = view_size_width >> 1 - rect.width() >> 1;
+        float x = (view_size_width / 2) - (Math.abs(rect.right - rect.left) / 2);
         float y = view_size_height >> 1;
 
         return new PointF(x, y);
@@ -208,7 +210,10 @@ public class SzinvalasztoView extends GameAbstract {
             GameInit();
         else {
             game_points[0] = final_point;
-            SzinvalasztoActivity.NextGame(context);
+            if (time_thread != null)
+                time_thread.interrupt();
+            if (next_game != null)
+                next_game.NextGame();
         }
     }
 }

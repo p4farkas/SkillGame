@@ -22,19 +22,19 @@ import hu.uniobuda.nik.androgamers.game_files.SolveItView;
 import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
 import hu.uniobuda.nik.androgamers.main_menu.IClientConnected;
 
-public class ServerThread extends ThreadAbstract {
+public class ServerThread implements Runnable {
 
     public static int port = 4444;
     private static ServerThread serverThread = null;
     private static IClientConnected client_interface;
+    private static Socket clientSocket;
+    private static OutputStream outstream;
+    private static PrintWriter printWriter;
     private final String imgString = "IMG";
     private final String playerString = "PLAY";
     private final String pointString = "POINT";
     boolean server_run = false;
     private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private OutputStream outstream;
-    private PrintWriter printWriter;
     private PlayerData playerData;
     private Context context;
 
@@ -56,7 +56,7 @@ public class ServerThread extends ThreadAbstract {
     }
 
     //String üzenet küldése
-    public boolean SendMessage(String message) {
+    public static boolean SendMessage(String message) {
         try {
 
             if (outstream == null && clientSocket != null) {

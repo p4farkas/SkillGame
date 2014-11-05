@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,28 +57,21 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
                         @Override
                         public void onClick(View view) {
                             player_dialog.dismiss();
+
+                            try {
+                                String initString = readInitParameters();
+                                processingInitString(initString);
+
+                                Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
+                                startActivity(intent);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 }
                 player_dialog.setCanceledOnTouchOutside(true);
-                player_dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        try {
-                            String initString = readInitParameters();
-                            processingInitString(initString);
-
-                            Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
-                            startActivity(intent);
-
-                            /////////////////////
-                            //KEZDŐDHET A JÁTÉK//
-                            /////////////////////
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
                 player_dialog.show();
             }
         });
@@ -95,9 +87,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
 
             Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
             startActivity(intent);
-            /////////////////////
-            //KEZDŐDHET A JÁTÉK//
-            /////////////////////
+
         } catch (IOException e) {
             e.printStackTrace();
         }

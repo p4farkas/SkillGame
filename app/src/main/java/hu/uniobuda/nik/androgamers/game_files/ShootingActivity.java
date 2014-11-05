@@ -12,7 +12,7 @@ import hu.uniobuda.nik.androgamers.R;
 public class ShootingActivity extends Activity {
 
     public static void NextGame(Context context) {
-        Intent intent = new Intent(context, RajzolgatoActivity.class);
+        Intent intent = new Intent(context, SolveItActivity.class);
         context.startActivity(intent);
     }
 
