@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.game_files;
+package hu.uniobuda.nik.androgamers.game_files;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,20 +11,19 @@ import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.oenik.bir.skillgame.R;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import hu.uniobuda.nik.androgamers.R;
 
 public class ShootingView extends GameAbstract {
 
     static int score;
 
     private static List<Integer> gameRound;
-
-    private Handler handler;
     private static Random r = new Random();
+    private Handler handler;
     private Paint paint;
     private Context context;
     private Bitmap bg;

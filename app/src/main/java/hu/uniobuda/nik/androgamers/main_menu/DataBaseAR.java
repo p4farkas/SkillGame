@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.main_menu;
+package hu.uniobuda.nik.androgamers.main_menu;
 
 import android.content.ContentValues;
 import android.content.Context;

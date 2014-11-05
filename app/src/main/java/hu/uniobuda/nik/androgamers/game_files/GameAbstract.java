@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.game_files;
+package hu.uniobuda.nik.androgamers.game_files;
 
 import android.content.Context;
 import android.util.AttributeSet;

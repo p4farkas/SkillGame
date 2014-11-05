@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame;
+package hu.uniobuda.nik.androgamers;
 
 public class Result {
     private String username;

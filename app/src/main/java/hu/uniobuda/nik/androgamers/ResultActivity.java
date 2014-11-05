@@ -1,11 +1,11 @@
-package com.oenik.bir.skillgame;
+package hu.uniobuda.nik.androgamers;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.oenik.bir.skillgame.game_files.GameAbstract;
-import com.oenik.bir.skillgame.main_menu.DataBaseAR;
+import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
+import hu.uniobuda.nik.androgamers.main_menu.DataBaseAR;
 
 public class ResultActivity extends Activity {
 

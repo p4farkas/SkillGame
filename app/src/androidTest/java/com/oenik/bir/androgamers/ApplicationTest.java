@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame;
+package com.oenik.bir.androgamers;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

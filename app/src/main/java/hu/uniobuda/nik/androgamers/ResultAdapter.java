@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame;
+package hu.uniobuda.nik.androgamers;
 
 import android.view.View;
 import android.view.ViewGroup;

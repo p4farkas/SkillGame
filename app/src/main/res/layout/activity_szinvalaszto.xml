@@ -6,7 +6,7 @@
     android:background="#ffdddddd"
     android:orientation="vertical">
 
-    <com.oenik.bir.skillgame.game_files.SzinvalasztoView
+    <hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView
         android:id="@+id/szinvalaszto_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

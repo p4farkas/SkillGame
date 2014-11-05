@@ -1,13 +1,10 @@
-package com.oenik.bir.skillgame;
+package hu.uniobuda.nik.androgamers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
-
-import com.oenik.bir.skillgame.game_files.GameAbstract;
-import com.oenik.bir.skillgame.main_menu.IServerConnected;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +17,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.Charset;
+
+import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
+import hu.uniobuda.nik.androgamers.main_menu.IServerConnected;
 
 public class ClientThread extends ThreadAbstract {
 

@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.game_files;
+package hu.uniobuda.nik.androgamers.game_files;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,11 +9,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.oenik.bir.skillgame.R;
-import com.oenik.bir.skillgame.ResultActivity;
+import hu.uniobuda.nik.androgamers.R;
+import hu.uniobuda.nik.androgamers.ResultActivity;
 
 
 public class SolveItActivity extends Activity {
+    View.OnClickListener onClickListenerSolveIt = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view.getTag() == "PASS") {
+                //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_SHORT).show();
+                SolveItView.score += 10;
+            } else {
+                //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_SHORT).show();
+                SolveItView.score -= 5;
+            }
+            SolveItView.solved = true;
+        }
+    };
     private Button first;
     private Button second;
     private Button third;
@@ -48,20 +61,6 @@ public class SolveItActivity extends Activity {
         third.setText(sPrefs.getString("thirdText", ""));
         third.setTag(sPrefs.getString("thirdTag", ""));
     }
-
-    View.OnClickListener onClickListenerSolveIt = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (view.getTag() == "PASS") {
-                //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_SHORT).show();
-                SolveItView.score += 10;
-            } else {
-                //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_SHORT).show();
-                SolveItView.score -= 5;
-            }
-            SolveItView.solved = true;
-        }
-    };
 
 
 }

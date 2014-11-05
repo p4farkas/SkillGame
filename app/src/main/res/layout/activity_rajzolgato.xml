@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.oenik.bir.skillgame.game_files.RajzolgatoView
+    <hu.uniobuda.nik.androgamers.game_files.RajzolgatoView
         android:id="@+id/rajzolgato_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

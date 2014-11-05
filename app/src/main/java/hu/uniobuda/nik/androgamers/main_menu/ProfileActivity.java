@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.main_menu;
+package hu.uniobuda.nik.androgamers.main_menu;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,12 +12,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.oenik.bir.skillgame.R;
-import com.oenik.bir.skillgame.Result;
-import com.oenik.bir.skillgame.ResultAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import hu.uniobuda.nik.androgamers.R;
+import hu.uniobuda.nik.androgamers.Result;
+import hu.uniobuda.nik.androgamers.ResultAdapter;
 
 public class ProfileActivity extends Activity {
 

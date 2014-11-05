@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.game_files;
+package hu.uniobuda.nik.androgamers.game_files;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,9 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.oenik.bir.skillgame.R;
+import hu.uniobuda.nik.androgamers.R;
 
-public class SzinvalasztoActivity extends Activity {
+
+public class ShootingActivity extends Activity {
 
     public static void NextGame(Context context) {
         Intent intent = new Intent(context, RajzolgatoActivity.class);
@@ -18,8 +19,10 @@ public class SzinvalasztoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_szinvalaszto);
+        setContentView(R.layout.activity_shooting);
 
-        Toast.makeText(this, GameAbstract.SZINVALASZTO_TEXT, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, GameAbstract.PARBAJOZO_TEXT, Toast.LENGTH_LONG).show();
     }
+
+
 }

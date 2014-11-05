@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.game_files;
+package hu.uniobuda.nik.androgamers.game_files;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.oenik.bir.skillgame.R;
+import hu.uniobuda.nik.androgamers.R;
 
 public class RajzolgatoActivity extends Activity {
 

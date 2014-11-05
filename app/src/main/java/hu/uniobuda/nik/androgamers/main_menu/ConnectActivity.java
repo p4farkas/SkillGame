@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.main_menu;
+package hu.uniobuda.nik.androgamers.main_menu;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -14,19 +14,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.oenik.bir.skillgame.ClientThread;
-import com.oenik.bir.skillgame.Connection;
-import com.oenik.bir.skillgame.R;
-import com.oenik.bir.skillgame.ServerThread;
-import com.oenik.bir.skillgame.game_files.GameAbstract;
-import com.oenik.bir.skillgame.game_files.RajzolgatoView;
-import com.oenik.bir.skillgame.game_files.ShootingView;
-import com.oenik.bir.skillgame.game_files.SolveItView;
-import com.oenik.bir.skillgame.game_files.SzinvalasztoActivity;
-import com.oenik.bir.skillgame.game_files.SzinvalasztoView;
-
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import hu.uniobuda.nik.androgamers.ClientThread;
+import hu.uniobuda.nik.androgamers.Connection;
+import hu.uniobuda.nik.androgamers.R;
+import hu.uniobuda.nik.androgamers.ServerThread;
+import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
+import hu.uniobuda.nik.androgamers.game_files.RajzolgatoView;
+import hu.uniobuda.nik.androgamers.game_files.ShootingView;
+import hu.uniobuda.nik.androgamers.game_files.SolveItView;
+import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoActivity;
+import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
 
 public class ConnectActivity extends Activity implements IClientConnected, IServerConnected {
 

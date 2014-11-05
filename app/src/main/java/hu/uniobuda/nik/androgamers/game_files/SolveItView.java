@@ -1,4 +1,4 @@
-package com.oenik.bir.skillgame.game_files;
+package hu.uniobuda.nik.androgamers.game_files;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,21 +17,17 @@ public class SolveItView extends GameAbstract {
     static final String[] equations = new String[]{"5*5+10=35", "56/7+6=14", "(91-27)/8=8"};
     static final List<Character> badAnswers = new ArrayList<Character>();
     static String selected;
-    private String question;
-
-    private static List<Integer> gameRound;
-
     static int selectedNumber;
     static char key;
     static char firstBadAnswer;
     static char secondBadAnswer;
-
     static boolean solved = false;
     static int score;
+    private static List<Integer> gameRound;
+    private static Random r = new Random();
+    private String question;
     private SharedPreferences sPrefs;
     private Handler handler;
-
-    private static Random r = new Random();
     private Paint paint;
     private Context context;
 
