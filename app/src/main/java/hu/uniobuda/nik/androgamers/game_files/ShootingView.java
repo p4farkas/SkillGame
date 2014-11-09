@@ -90,17 +90,17 @@ public class ShootingView extends GameAbstract {
                             e.printStackTrace();
                         }
                         GameInit();
-                        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
+                        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.cowboy);
                         postInvalidate();
                     }
-                } while (current_game < GAME_COUNT);
+                } while (current_game <= GAME_COUNT);
                 GetResult();
                 ShootingActivity.NextGame(context);
             }
         });
         time_thread.start();
 
-        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.gunman);
+        bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.cowboy);
         GameInit();
     }
 

@@ -79,7 +79,6 @@ public class SzinvalasztoView extends GameAbstract {
         builder.append(GameAbstract.SZINVALASZTO_NAME).append(":");
         for (int i = 0; i < GAME_COUNT; i++) {
             getRandomColor();
-
             builder.append(code_index).append(":").append(name_index).append(":");
         }
 

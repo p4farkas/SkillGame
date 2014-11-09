@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import hu.uniobuda.nik.androgamers.ClientThread;
 import hu.uniobuda.nik.androgamers.Connection;
 import hu.uniobuda.nik.androgamers.R;
 import hu.uniobuda.nik.androgamers.ServerThread;
@@ -29,6 +28,9 @@ import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
 
 public class ConnectActivity extends Activity implements IClientConnected, IServerConnected {
 
+    public static boolean server_connected = false;
+    public static boolean client_connected = false;
+    public static ServerThread.PlayerData player_data = null;
     private static Dialog dialog;
     private Button host_button;
     private Button client_button;
@@ -36,6 +38,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
     private EditText client_port_text;
     private EditText client_ip_text;
     private Connection connection;
+    private boolean first_game = true;
 
     //Szerver esetén ez a callback, hogy a másik játékos csatlakozott
     public void ClientConnected(final ServerThread.PlayerData playerData, final Context context) {
@@ -58,16 +61,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
                         public void onClick(View view) {
                             player_dialog.dismiss();
 
-                            try {
-                                String initString = readInitParameters();
-                                processingInitString(initString);
-
-                                Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
-                                startActivity(intent);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            gameInit();
                         }
                     });
                 }
@@ -79,18 +73,40 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
         Looper.loop();
     }
 
-    //Kliens esetén ez a callback, hogy a másik játékos csatlakozott
-    public void ServerConnected(Context context) {
+    public void gameInit() {
         try {
             String initString = readInitParameters();
             processingInitString(initString);
 
             Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
             startActivity(intent);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //Kliens esetén ez a callback, hogy a másik játékos csatlakozott
+    public void ServerConnected(Context context) {
+        Looper.prepare();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    String initString = readInitParameters();
+                    processingInitString(initString);
+
+                    Intent intent = new Intent(ConnectActivity.this, SzinvalasztoActivity.class);
+                    startActivity(intent);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Looper.loop();
     }
 
     private void processingInitString(String line) {
@@ -146,8 +162,29 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
         });
 
         //Az interfész segítségével a háttérszálak értesíteni tudják ezt az activityt
-        ServerThread.setClient_interface(this);
-        ClientThread.setServer_interface(this);
+        //ServerThread.setClient_interface(this);
+        //ClientThread.setServer_interface(this);
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (!server_connected) {
+                }
+                ServerConnected(ConnectActivity.this);
+            }
+        }.start();
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (!client_connected) {
+                }
+                if (first_game)
+                    ClientConnected(player_data, ConnectActivity.this);
+                else
+                    gameInit();
+            }
+        }.start();
     }
 
     //Beolvassuk a játékok kezdeti paramétereit
@@ -184,9 +221,9 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
 
     //Kliens háttérszál indítása a megadott ip címmel és porttal
     private void ClientConnect() {
-        String ip = client_ip_text.getText().toString().equals("") ? "192.168.1.1" :
+        String ip = client_ip_text.getText().toString().equals("") ? "192.168.0.220" :
                 client_ip_text.getText().toString();
-        int port = 8888;
+        int port = 1234;
         try {
             port = Integer.parseInt(client_port_text.getText().toString());
         } catch (NumberFormatException e) {

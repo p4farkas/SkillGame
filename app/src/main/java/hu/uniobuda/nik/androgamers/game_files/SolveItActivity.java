@@ -33,6 +33,7 @@ public class SolveItActivity extends Activity {
 
     public static void ShowResult(Context context) {
         Intent intent = new Intent(context, ResultActivity.class);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
     }
 

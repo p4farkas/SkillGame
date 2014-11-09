@@ -15,6 +15,7 @@ public class SzinvalasztoActivity extends Activity implements INextGame {
 
     public void NextGame() {
         Intent intent = new Intent(SzinvalasztoActivity.this, RajzolgatoActivity.class);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
     }
 

@@ -12,6 +12,7 @@ public class RajzolgatoActivity extends Activity {
 
     public static void NextGame(Context context) {
         Intent intent = new Intent(context, ShootingActivity.class);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
     }
 

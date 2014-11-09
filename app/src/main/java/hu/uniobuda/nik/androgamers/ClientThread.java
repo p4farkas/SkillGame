@@ -2,13 +2,15 @@ package hu.uniobuda.nik.androgamers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,19 +21,27 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
+import hu.uniobuda.nik.androgamers.game_files.RajzolgatoView;
+import hu.uniobuda.nik.androgamers.game_files.ShootingView;
+import hu.uniobuda.nik.androgamers.game_files.SolveItView;
+import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
+import hu.uniobuda.nik.androgamers.main_menu.ConnectActivity;
 import hu.uniobuda.nik.androgamers.main_menu.IServerConnected;
 
 public class ClientThread implements Runnable {
 
-    public static int port = 4444;
-    public static String ip = "192.168.0.219";
+    public static int port = 1234;
+    public static String ip = "192.168.0.220";
     public static ClientThread clientThread = null;
+    public static boolean client_run = false;
     private static IServerConnected server_interface;
     private static Socket server_socket;
     private static OutputStream outstream;
+    private static InputStreamReader streamreader;
     private static PrintWriter printWriter;
+    private static IFinalResult final_result;
     private final String pointString = "POINT";
-    private boolean client_run = false;
+    private final String initString = "INIT";
     private Context context;
 
     private ClientThread(String ip_new, int port_new, Context context_new) {
@@ -39,6 +49,10 @@ public class ClientThread implements Runnable {
         port = port_new;
 
         context = context_new;
+    }
+
+    public static void setFinal_result(IFinalResult _final_result) {
+        final_result = _final_result;
     }
 
     public static void setServer_interface(IServerConnected _server_interface) {
@@ -74,50 +88,77 @@ public class ClientThread implements Runnable {
         return false;
     }
 
+    //A játékok osztályai generálják a kezdőértékeket
+    //Visszatérési érték az összefűzött string
+    private String getGameInitString() throws IOException {
+        StringBuilder builder = new StringBuilder();
+        builder.append("INIT_DATA:");
+        String rajzolgatoString = RajzolgatoView.getGameInitString(500, 1000);
+        String szinvalasztoString = SzinvalasztoView.getGameInitString();
+        String shootingString = ShootingView.getGameInitString();
+        String solveitString = SolveItView.getGameInitString();
+
+        builder.append(szinvalasztoString).append(rajzolgatoString)
+                .append(shootingString).append(solveitString).append("END");
+
+        String filename = "InitParameters";
+        String text = builder.toString();
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(text.getBytes());
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return text;
+    }
+
     @Override
     public void run() {
         try {
             server_socket = new Socket(ip, port);
             Log.i("Client", "Connected to server: " + ip + ":" + port);
 
-            SendImage(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.spongebob)); //Kép elküldése
+            streamreader = new InputStreamReader(server_socket.getInputStream());
+
+            String init_data = getGameInitString();
+            SendMessage(init_data);
+            Log.i("Client", "Init data sent");
+
+            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View activity_profile = inflater.inflate(R.layout.activity_profile, null);
+            ImageView image = (ImageView) activity_profile.findViewById(R.id.userpic);
+            SendImage(((BitmapDrawable)image.getDrawable()).getBitmap()); //Kép elküldése
+            Log.i("Client", "Image sent");
 
             client_run = true;
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(server_socket.getInputStream()));
+            BufferedReader bufferedReader = new BufferedReader(streamreader);
 
             String line = "";
             while (client_run && !Thread.currentThread().isInterrupted()) {
                 line = bufferedReader.readLine();
 
-                if (line.substring(0, 5).equals(pointString)) {
+                if (line.substring(0, 2).equals("OK")) {
+                    ConnectActivity.server_connected = true;
+                    //if (server_interface != null)
+                    //    server_interface.ServerConnected(context);
+                } else if (line.substring(0, 5).equals(pointString)) {
                     int point = Integer.parseInt(line.substring(6));
-                    ResultActivity.getFinalPoint(point);
+                    if (final_result != null)
+                        final_result.getFinalPoint(point);
 
                     SendMessage("POINT:" + GameAbstract.getFinalPoint());
-                } else if (setGameInitString(line)) {
-                    if (server_interface != null)
-                        server_interface.ServerConnected(context);
                 }
             }
 
         } catch (IOException e) {
             Log.e("Client", e.getMessage());
-        }
-    }
-
-    //A játékok kezdeti paramétereinek beolvasása és mentése
-    private boolean setGameInitString(String line) throws IOException {
-        try {
-            String FILENAME = "InitParameters";
-            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            fos.write(line.getBytes());
-            fos.flush();
-            fos.close();
-            return true;
-        } catch (FileNotFoundException ex) {
-            return false;
+            client_run = false;
         }
     }
 

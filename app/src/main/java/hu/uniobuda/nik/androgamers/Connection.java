@@ -31,7 +31,10 @@ public class Connection {
             ClientThread.SendMessage(message);
     }
 
-    public void CloseConnection() {
+    public static void CloseConnection() {
+        //ServerThread.server_run = false;
+        //ClientThread.client_run = false;
+
         if (conn_thread != null) {
             conn_thread.interrupt();
             conn_thread = null;

@@ -24,7 +24,7 @@
             android:paddingTop="8dp"
             android:text="Kiss Pista"
             android:textColor="#ff000000"
-            android:textSize="40dp"
+            android:textSize="25dp"
             android:textStyle="bold"
             />
 
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="25dp"
         android:paddingTop="8dp"
         android:text="Legjobb eredmények:"
         android:textSize="@dimen/text_size"
@@ -69,7 +69,7 @@
 
     <ListView
         android:id="@+id/list_results"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"/>

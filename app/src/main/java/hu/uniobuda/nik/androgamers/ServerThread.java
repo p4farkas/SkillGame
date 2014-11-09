@@ -7,6 +7,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,31 +17,35 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import hu.uniobuda.nik.androgamers.game_files.RajzolgatoView;
-import hu.uniobuda.nik.androgamers.game_files.ShootingView;
-import hu.uniobuda.nik.androgamers.game_files.SolveItView;
-import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
+import hu.uniobuda.nik.androgamers.main_menu.ConnectActivity;
 import hu.uniobuda.nik.androgamers.main_menu.IClientConnected;
 
 public class ServerThread implements Runnable {
 
     public static int port = 4444;
+    public static boolean server_run = false;
     private static ServerThread serverThread = null;
     private static IClientConnected client_interface;
     private static Socket clientSocket;
     private static OutputStream outstream;
     private static PrintWriter printWriter;
+    private static IFinalResult final_result;
     private final String imgString = "IMG";
     private final String playerString = "PLAY";
     private final String pointString = "POINT";
-    boolean server_run = false;
+    private final String initString = "INIT";
     private ServerSocket serverSocket;
     private PlayerData playerData;
     private Context context;
+    private String initdataString;
 
     private ServerThread(int port_new, Context context_new) {
         port = port_new;
         context = context_new;
+    }
+
+    public static void setFinal_result(IFinalResult _final_result) {
+        final_result = _final_result;
     }
 
     public static void setClient_interface(IClientConnected _client_interface) {
@@ -66,6 +71,7 @@ public class ServerThread implements Runnable {
             }
 
             printWriter.println(message);
+            printWriter.flush();
 
             return true;
 
@@ -74,6 +80,22 @@ public class ServerThread implements Runnable {
         }
 
         return false;
+    }
+
+    //A játékok kezdeti paramétereinek beolvasása és mentése
+    private boolean setGameInitString(String line) throws IOException {
+
+        try {
+            String FILENAME = "InitParameters";
+            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(line.getBytes());
+            fos.flush();
+            fos.close();
+            return true;
+        } catch (FileNotFoundException ex) {
+            Log.e("setGameInitString()", ex.getMessage());
+            return false;
+        }
     }
 
     public void run() {
@@ -92,10 +114,9 @@ public class ServerThread implements Runnable {
 
             try {
 
-                String initdataString = getGameInitString(); //A játékok random kezdőértékei
+                //initdataString = getGameInitString(); //A játékok random kezdőértékei
 
                 clientSocket = serverSocket.accept();
-                SendMessage(initdataString); //Játék kezdeti paraméterek elküldése
 
                 CommunicationThread commThread = new CommunicationThread();
                 new Thread(commThread).start();
@@ -104,37 +125,6 @@ public class ServerThread implements Runnable {
                 Log.e("Server - ServerThread", e.getMessage());
             }
         }
-    }
-
-    //A játékok osztályai legenerálják a kezdőértékeket
-    //Visszatérési érték az összefűzött string
-    private String getGameInitString() throws IOException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("INIT_DATA:");
-        String rajzolgatoString = RajzolgatoView.getGameInitString(500, 1000);
-        String szinvalasztoString = SzinvalasztoView.getGameInitString();
-        String shootingString = ShootingView.getGameInitString();
-        String solveitString = SolveItView.getGameInitString();
-
-        builder.append(szinvalasztoString);
-        builder.append(rajzolgatoString);
-        builder.append(shootingString);
-        builder.append(solveitString);
-        builder.append("END");
-
-        String filename = "InitParameters";
-        String string = builder.toString();
-        FileOutputStream outputStream;
-
-        try {
-            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(string.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return builder.toString();
     }
 
     private class CommunicationThread implements Runnable {
@@ -158,6 +148,8 @@ public class ServerThread implements Runnable {
                 input = new BufferedReader(new InputStreamReader(input_stream));
 
                 Log.i("Server", "Receiving...");
+
+                //SendMessage(initdataString); //Játék kezdeti paraméterek elküldése
 
             } catch (IOException e) {
                 Log.e("Server - CommThread", e.getMessage());
@@ -186,14 +178,22 @@ public class ServerThread implements Runnable {
                             final Bitmap bitmap = getImage(input, line);
 
                             if (bitmap != null) {
+                                SendMessage("OK");
                                 if (playerData == null) playerData = new PlayerData();
                                 playerData.setPic(bitmap);
-                                if (client_interface != null)
-                                    client_interface.ClientConnected(playerData, context);
+
+                                ConnectActivity.player_data = playerData;
+                                ConnectActivity.client_connected = true;
+                                //if (client_interface != null)
+                                //    client_interface.ClientConnected(playerData, context);
                             }
                         } else if (line.substring(0, 5).equals(pointString)) {
                             int point = Integer.parseInt(line.substring(6));
-                            ResultActivity.getFinalPoint(point);
+                            if (final_result != null) {
+                                final_result.getFinalPoint(point);
+                            }
+                        } else if (line.substring(0, 4).equals(initString)) {
+                            setGameInitString(line);
                         }
                     }
                 } catch (Exception e) {
