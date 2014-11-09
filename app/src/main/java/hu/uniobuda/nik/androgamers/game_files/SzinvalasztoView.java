@@ -50,6 +50,7 @@ public class SzinvalasztoView extends GameAbstract {
         next_game = _next_game;
     }
 
+    //Játék kezdőértékeinek beállítása
     public static boolean setInitParameters(String line) {
 
         String[] tokens = line.split(":");

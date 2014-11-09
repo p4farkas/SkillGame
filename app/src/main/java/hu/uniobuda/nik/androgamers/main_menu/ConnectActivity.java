@@ -161,10 +161,9 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
             }
         });
 
-        //Az interfész segítségével a háttérszálak értesíteni tudják ezt az activityt
-        //ServerThread.setClient_interface(this);
-        //ClientThread.setServer_interface(this);
 
+        //A szálak futnak háttérben és a szerver/kliens csatlakozása esetén meghívják a megfelelő metódust
+        //Ez jelenti tulajdonképpen a csatlakozás esetén a callback-et
         new Thread() {
             @Override
             public void run() {

@@ -2,12 +2,8 @@ package hu.uniobuda.nik.androgamers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +23,7 @@ import hu.uniobuda.nik.androgamers.game_files.SolveItView;
 import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
 import hu.uniobuda.nik.androgamers.main_menu.ConnectActivity;
 import hu.uniobuda.nik.androgamers.main_menu.IServerConnected;
+import hu.uniobuda.nik.androgamers.main_menu.ProfileActivity;
 
 public class ClientThread implements Runnable {
 
@@ -129,10 +126,11 @@ public class ClientThread implements Runnable {
             SendMessage(init_data);
             Log.i("Client", "Init data sent");
 
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View activity_profile = inflater.inflate(R.layout.activity_profile, null);
-            ImageView image = (ImageView) activity_profile.findViewById(R.id.userpic);
-            SendImage(((BitmapDrawable)image.getDrawable()).getBitmap()); //Kép elküldése
+//            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View activity_profile = inflater.inflate(R.layout.activity_profile, null);
+//            ImageView image = (ImageView) activity_profile.findViewById(R.id.userpic);
+
+            SendImage(ProfileActivity.loadImage(context)); //Kép elküldése
             Log.i("Client", "Image sent");
 
             client_run = true;

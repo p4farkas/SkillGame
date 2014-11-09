@@ -51,6 +51,7 @@ public class RajzolgatoView extends GameAbstract {
         Init();
     }
 
+    //Kezdőértékek beállítása a paraméterben átadott sorból
     public static boolean setInitParameters(String line) {
         String[] tokens = line.split(":");
 
@@ -77,7 +78,7 @@ public class RajzolgatoView extends GameAbstract {
         double gauss_h;
         for (int k = 0; k < GAME_COUNT; k++) {
             for (int i = 0; i < POINT_LENGTH; i++) {
-                gauss_h = Math.abs(rand.nextGaussian() * 100);
+                gauss_h = Math.abs(rand.nextGaussian() * 100); //A pontok horizontális szórodása miatt
                 gauss_h = ((int) gauss_h > (view_size_width * 0.1)) ? 0 : gauss_h;
                 int x = rand.nextInt(view_size_width - view_size_width / 2) + view_size_width / 4 + (int) gauss_h;
                 int y = rand.nextInt(view_size_height - view_size_height / 2) + view_size_height / 4;
@@ -140,7 +141,7 @@ public class RajzolgatoView extends GameAbstract {
                         GameInit();
                     }
 
-                } while (current_game < GAME_COUNT-1);
+                } while (current_game < GAME_COUNT - 1);
 
                 game_points[1] = final_point;
 
@@ -265,7 +266,8 @@ public class RajzolgatoView extends GameAbstract {
             }
         }
 
-        final_point += getScore(bounding_area, draw_area, faults); //Hozzáadjuk a játék végső pontszámához
+        //Hozzáadjuk a játék végső pontszámához
+        final_point += getScore(bounding_area, draw_area, faults);
 
         current_game++;
         old_time = System.currentTimeMillis();
@@ -283,7 +285,7 @@ public class RajzolgatoView extends GameAbstract {
                     long current = System.currentTimeMillis();
                     if ((current - start) >= 1000) {
                         run = false;
-                        if (current_game < GAME_COUNT-1)
+                        if (current_game < GAME_COUNT - 1)
                             GameInit();
                         else {
                             //time_thread.interrupt();

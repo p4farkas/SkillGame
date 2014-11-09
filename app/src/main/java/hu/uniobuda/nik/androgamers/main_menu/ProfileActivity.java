@@ -1,17 +1,27 @@
 package hu.uniobuda.nik.androgamers.main_menu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +30,6 @@ import hu.uniobuda.nik.androgamers.Result;
 import hu.uniobuda.nik.androgamers.ResultAdapter;
 
 public class ProfileActivity extends Activity {
-
     private final int CAMERA_REQUEST = 1;
     private final int SELECT_PICTURE = 2;
     private ImageView userpic;
@@ -30,12 +39,45 @@ public class ProfileActivity extends Activity {
     private List<Result> results;
     private ResultAdapter adapter;
 
+    //Kép betöltése belső tárolóból
+    public static Bitmap loadImage(Context context) {
+
+        StringBuilder builder = new StringBuilder();
+        int charsRead;
+        char[] buffer = new char[4096];
+
+        String FILENAME = "UserPic";
+        try {
+            FileInputStream fis = context.openFileInput(FILENAME);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            while ((charsRead = reader.read(buffer)) != -1) {
+                String message = new String(buffer).substring(0, charsRead);
+                builder.append(message);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte[] img_bytes = builder.toString().getBytes();
+        byte[] base_decoded = Base64.decode(img_bytes, 0); //Base64
+
+        return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length); //jpeg dekódolás
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
         userpic = (ImageView) findViewById(R.id.userpic);
+        Bitmap image = loadImage(ProfileActivity.this); //Betöltjük a felhasználó képét
+        if (image == null) //Lementjük a default képet, hogy a felhasználó képe ne legyen null
+            saveImage(((BitmapDrawable) userpic.getDrawable()).getBitmap());
+        else
+            userpic.setImageBitmap(image);
+
         camera = (ImageView) findViewById(R.id.camera);
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +101,7 @@ public class ProfileActivity extends Activity {
 
         results = new ArrayList<Result>();
         Cursor c = dbAR.loadHighScores();
-        while(!c.isAfterLast()){
+        while (!c.isAfterLast()) {
             String score = c.getString(c.getColumnIndex("score"));
             results.add(new Result("local", Integer.valueOf(score)));
             c.moveToNext();
@@ -81,10 +123,17 @@ public class ProfileActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Bitmap photo = null;
+
+        //kép készítése kamerával
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            photo = (Bitmap) data.getExtras().get("data");
+            if (photo == null)
+                return;
             userpic.setImageBitmap(photo);
-        } else if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
+        }
+        //Kép betöltése galériából
+        else if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
             Cursor cursor = this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
@@ -94,7 +143,38 @@ public class ProfileActivity extends Activity {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            userpic.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            //első kép betöltése -> a válaszott fájl
+            photo = BitmapFactory.decodeFile(picturePath);
+            if (photo == null)
+                return;
+            userpic.setImageBitmap(photo);
+        }
+
+        if (photo == null)
+            return;
+        saveImage(photo);
+    }
+
+    //Kép mentése belső tárolóra: jpeg és base64 kódolás
+    private void saveImage(Bitmap photo) {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        byte[] byteArray = stream.toByteArray();
+        byte[] img_bytes = Base64.encode(byteArray, 0);
+
+        String FILENAME = "UserPic";
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+
+            fos.write(img_bytes);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
