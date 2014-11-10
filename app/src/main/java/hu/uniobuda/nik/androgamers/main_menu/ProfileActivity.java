@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +31,8 @@ import hu.uniobuda.nik.androgamers.Result;
 import hu.uniobuda.nik.androgamers.ResultAdapter;
 
 public class ProfileActivity extends Activity {
+    public static String userName;
+
     private final int CAMERA_REQUEST = 1;
     private final int SELECT_PICTURE = 2;
     private ImageView userpic;
@@ -38,6 +41,7 @@ public class ProfileActivity extends Activity {
     private ListView listview;
     private List<Result> results;
     private ResultAdapter adapter;
+    private TextView nameLabel;
 
     //Kép betöltése belső tárolóból
     public static Bitmap loadImage(Context context) {
@@ -117,6 +121,10 @@ public class ProfileActivity extends Activity {
         adapter = new ResultAdapter(results);
         listview = (ListView) findViewById(R.id.list_results);
         listview.setAdapter(adapter);
+
+//        userName = getUserName();
+//        nameLabel = (TextView) findViewById(R.id.name_label);
+//        nameLabel.setText(userName);
     }
 
     @Override
@@ -170,6 +178,38 @@ public class ProfileActivity extends Activity {
 
             fos.write(img_bytes);
             fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getUserName() {
+        try {
+            FileInputStream fis = openFileInput("User");
+            byte[] buffer = new byte[1024];
+            int len;
+            String text = "";
+            while ((len = fis.read(buffer)) > 0) {
+                text += new String(buffer, 0, len);
+            }
+            fis.close();
+            return text;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public void setUserName() {
+        try {
+            FileOutputStream fos = openFileOutput("User", MODE_PRIVATE);
+//            fos.write();
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

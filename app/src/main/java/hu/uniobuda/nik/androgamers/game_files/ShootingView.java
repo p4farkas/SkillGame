@@ -9,7 +9,9 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class ShootingView extends GameAbstract {
         Init();
     }
 
+    //Processing pregenerated GameInit parameters
     public static boolean setInitParameters(String line) {
 
         String[] tokens = line.split(":");
@@ -58,6 +61,7 @@ public class ShootingView extends GameAbstract {
         return true;
     }
 
+    //GameInit parameters generation
     public static String getGameInitString() {
 
         StringBuilder builder = new StringBuilder();
@@ -69,13 +73,16 @@ public class ShootingView extends GameAbstract {
         return builder.toString();
     }
 
+    //set final result in GameAbstract
     @Override
     public void GetResult() {
         game_points[2]=score;
     }
 
+    //startup initialization
     @Override
     public void Init() {
+//        setInitParameters(ShootingView.getGameInitString());
         score = 0;
         back_handler = new Handler();
         handler = new Handler();
@@ -93,7 +100,7 @@ public class ShootingView extends GameAbstract {
                         bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.cowboy);
                         postInvalidate();
                     }
-                } while (current_game <= GAME_COUNT);
+                } while (current_game < GAME_COUNT);
                 GetResult();
                 ShootingActivity.NextGame(context);
             }
@@ -104,9 +111,9 @@ public class ShootingView extends GameAbstract {
         GameInit();
     }
 
+    //next game round initialization
     @Override
     protected void GameInit() {
-        current_game++;
         started = false;
 
 //        int delayTime = r.nextInt(15000);
@@ -152,8 +159,10 @@ public class ShootingView extends GameAbstract {
                 }).start();
             }
         }, delayTime);
+        current_game++;
     }
 
+    //creating view for game
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -170,6 +179,7 @@ public class ShootingView extends GameAbstract {
         canvas.drawText("Score: " + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
     }
 
+    //detecting shooting
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event != null) {

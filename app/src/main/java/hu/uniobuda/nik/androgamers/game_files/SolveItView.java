@@ -39,6 +39,7 @@ public class SolveItView extends GameAbstract {
         Init();
     }
 
+    //Processing pregenerated GameInit parameters
     public static boolean setInitParameters(String line) {
 
         String[] tokens = line.split(":");
@@ -56,6 +57,7 @@ public class SolveItView extends GameAbstract {
         return true;
     }
 
+    //GameInit parameters generation
     public static String getGameInitString() {
 
         StringBuilder builder = new StringBuilder();
@@ -89,11 +91,13 @@ public class SolveItView extends GameAbstract {
         return builder.toString();
     }
 
+    //set final result in GameAbstract
     @Override
     public void GetResult() {
         game_points[3] = score;
     }
 
+    //startup initialization
     @Override
     public void Init() {
 //        //generating bad answers
@@ -139,6 +143,7 @@ public class SolveItView extends GameAbstract {
         GameInit();
     }
 
+    //next game round initialization
     @Override
     protected void GameInit() {
         current_game++;
@@ -212,6 +217,7 @@ public class SolveItView extends GameAbstract {
 
     }
 
+    //creating view for game
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
