@@ -12,12 +12,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,7 +32,6 @@ import hu.uniobuda.nik.androgamers.Result;
 import hu.uniobuda.nik.androgamers.ResultAdapter;
 
 public class ProfileActivity extends Activity {
-    public static String userName;
 
     private final int CAMERA_REQUEST = 1;
     private final int SELECT_PICTURE = 2;
@@ -41,7 +41,9 @@ public class ProfileActivity extends Activity {
     private ListView listview;
     private List<Result> results;
     private ResultAdapter adapter;
-    private TextView nameLabel;
+    private EditText nameLabel;
+    private final static String usernameFilePath = "User";
+
 
     //Kép betöltése belső tárolóból
     public static Bitmap loadImage(Context context) {
@@ -74,6 +76,18 @@ public class ProfileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        //load username
+        nameLabel = (EditText) findViewById(R.id.name_label);
+        nameLabel.setText(getUsername(this));
+        nameLabel.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b) {
+                    setUsername(ProfileActivity.this, nameLabel.getText().toString());
+                }
+            }
+        });
 
         userpic = (ImageView) findViewById(R.id.userpic);
         Bitmap image = loadImage(ProfileActivity.this); //Betöltjük a felhasználó képét
@@ -121,10 +135,6 @@ public class ProfileActivity extends Activity {
         adapter = new ResultAdapter(results);
         listview = (ListView) findViewById(R.id.list_results);
         listview.setAdapter(adapter);
-
-//        userName = getUserName();
-//        nameLabel = (TextView) findViewById(R.id.name_label);
-//        nameLabel.setText(userName);
     }
 
     @Override
@@ -186,30 +196,39 @@ public class ProfileActivity extends Activity {
         }
     }
 
-    public String getUserName() {
+    //read username from file
+    public static String getUsername(Context context) {
+        String text = "DefaultUser";
         try {
-            FileInputStream fis = openFileInput("User");
+            //create if not exist
+            File file = new File(String.valueOf(context.getApplicationContext().getFileStreamPath(usernameFilePath)));
+            if (!file.exists()) {
+                setUsername(context, text);
+            }
+            //read
+            FileInputStream fis = context.openFileInput(usernameFilePath);
             byte[] buffer = new byte[1024];
             int len;
-            String text = "";
+            text = "";
             while ((len = fis.read(buffer)) > 0) {
                 text += new String(buffer, 0, len);
             }
             fis.close();
-            return text;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return "";
         } catch (IOException e) {
             e.printStackTrace();
-            return "";
         }
+        return text;
     }
 
-    public void setUserName() {
+    //save username to file
+    public static void setUsername(Context context, String username) {
         try {
-            FileOutputStream fos = openFileOutput("User", MODE_PRIVATE);
-//            fos.write();
+            //save
+            FileOutputStream fos = context.openFileOutput(usernameFilePath, MODE_PRIVATE);
+            fos.write(username.getBytes());
+            fos.flush();
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

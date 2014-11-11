@@ -16,7 +16,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
         android:paddingTop="8dp"
-        android:text="Végső pontszám"
+        android:text="@string/result_score_label"
         android:textSize="30sp"
         />
 
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="Én: 0 pont"
+            android:text="@string/result_myscore_label"
             android:textSize="@dimen/text_size"
             />
 
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="Ő: 0 pont"
+            android:text="@string/result_enemyscore_label"
             android:textSize="@dimen/text_size"
             />
         </LinearLayout>
@@ -64,6 +64,6 @@
         android:id="@+id/new_game_button"
         style="@style/button_style"
         android:layout_marginTop="15dp"
-        android:text="Új játék"/>
+        android:text="@string/new_game_button_label"/>
 
 </LinearLayout>

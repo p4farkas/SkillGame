@@ -176,7 +176,7 @@ public class ShootingView extends GameAbstract {
         paint.setColor(Color.BLACK);
         paint.setTextSize(18);
         paint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("Score: " + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
+        canvas.drawText(R.string.score_label + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
     }
 
     //detecting shooting

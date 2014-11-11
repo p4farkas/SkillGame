@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import hu.uniobuda.nik.androgamers.R;
+
 public class SolveItView extends GameAbstract {
 
     static final String[] equations = new String[]{"5*5+10=35", "56/7+6=14", "(91-27)/8=8"};
@@ -228,7 +230,7 @@ public class SolveItView extends GameAbstract {
         paint.setColor(Color.BLACK);
         paint.setTextSize(18);
         paint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText("Score: " + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
+        canvas.drawText(R.string.score_label + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
 
         paint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(question, width >> 1, height >> 2, paint);
