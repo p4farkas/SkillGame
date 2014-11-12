@@ -12,6 +12,11 @@ import hu.uniobuda.nik.androgamers.R;
 
 public class MainActivity extends Activity {
 
+    private Button startButton;
+    private Button profileButton;
+    private Button infoButton;
+    private Button helpButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +31,7 @@ public class MainActivity extends Activity {
         //backgroundAnimation.start();
 
 
-        Button startButton = (Button) findViewById(R.id.start_button);
+        startButton = (Button) findViewById(R.id.start_button);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,7 +40,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button profileButton = (Button) findViewById(R.id.profil_button);
+        profileButton = (Button) findViewById(R.id.profil_button);
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,7 +49,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button infoButton = (Button) findViewById(R.id.info_button);
+        infoButton = (Button) findViewById(R.id.info_button);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +60,15 @@ public class MainActivity extends Activity {
                         .setPositiveButton("OK", null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+            }
+        });
+
+        helpButton = (Button) findViewById(R.id.help_button);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent helpActivity = new Intent(MainActivity.this, HelpActivity.class);
+                startActivity(helpActivity);
             }
         });
     }

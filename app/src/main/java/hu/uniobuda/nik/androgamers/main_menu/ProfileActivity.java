@@ -84,7 +84,8 @@ public class ProfileActivity extends Activity {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (!b) {
-                    setUsername(ProfileActivity.this, nameLabel.getText().toString());
+                    if (nameLabel.getText().toString().matches("")) return;
+                    setUsername(ProfileActivity.this, nameLabel.getText().toString().trim());
                 }
             }
         });

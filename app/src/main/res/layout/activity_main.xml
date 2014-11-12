@@ -27,4 +27,15 @@
         android:layout_below="@id/profil_button"
         android:text="@string/info_button"/>
 
+    <Button
+        android:id="@+id/help_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/help_button_text"
+        android:background="@android:color/transparent"
+        android:textStyle="bold"
+        android:textSize="30sp"/>
+
 </RelativeLayout>

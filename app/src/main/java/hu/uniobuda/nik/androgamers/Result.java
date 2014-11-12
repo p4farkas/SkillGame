@@ -10,7 +10,7 @@ public class Result {
     }
 
     public String getResultString() {
-        return result + " pont (" + "2012.08.31. 17:15)";
+        return result + " pont";
     }
 
 }

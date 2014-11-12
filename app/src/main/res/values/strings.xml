@@ -13,7 +13,7 @@
     <string name="ip_address_label">IP cím:</string>
     <string name="client_button">Kliens mód</string>
     <string name="dialog_message">Verziószám: 0.8 \nSzerzők: Farkas Péter, Matyóka Roland \n\ngithub: https://github.com/p4farkas/SkillGame</string>
-    <string name="dialog_title">Információ</string>
+    <string name="dialog_title">SkillGame információ</string>
     <string name="ip_address_hint">192.168.1.1</string>
     <string name="title_activity_shooting">ShootingActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
@@ -28,5 +28,20 @@
     <string name="new_game_button_label">Új játék</string>
     <string name="result_myscore_label">Én: 0 pont</string>
     <string name="result_enemyscore_label">Ő: 0 pont</string>
+    <string name="help_button_text">\?</string>
+    <string name="title_activity_help">HelpActivity</string>
+    <string name="help_content_text">Egy kétszemélyes, hálózati játékszoftver, melyben időre kell az alábbi feladatokat végrehajtani:</string>
+    <string name="help_app1_text">Színválasztó</string>
+    <string name="help_app2_text">Befoglaló</string>
+    <string name="help_app3_text">Párbajozó</string>
+    <string name="help_app4_text">Számolgató</string>
+    <string name="dialog_app1_message">Koppintással jelezd ha a felirat szövege és színe megegyezik.</string>
+    <string name="dialog_app2_message">Rajzold meg a legkisebb befoglaló téglalapot.</string>
+    <string name="dialog_app3_message">Az ellenfél párbajlövése után süssd el te is mihamarabb a fegyvert és győzedelmeskedj a párbajban.</string>
+    <string name="dialog_app4_message">Válaszd ki azt a lehetőséget a hiányzó karakter helyére amellyel az egyenlet két oldala azonos értékű lesz.</string>
+    <string name="dialog_app1_title">Színválasztó játék</string>
+    <string name="dialog_app2_title">Befoglaló játék</string>
+    <string name="dialog_app3_title">Párbajozó játék</string>
+    <string name="dialog_app4_title">Számolgató játék</string>
 
 </resources>
