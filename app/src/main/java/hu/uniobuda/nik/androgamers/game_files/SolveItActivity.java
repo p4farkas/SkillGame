@@ -25,7 +25,7 @@ public class SolveItActivity extends Activity implements INextGame {
                 SolveItView.score += 10;
             } else {
                 //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_SHORT).show();
-                SolveItView.score -= 5;
+//                SolveItView.score -= 5;
             }
             SolveItView.solved = true;
         }

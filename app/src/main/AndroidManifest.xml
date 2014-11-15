@@ -60,7 +60,8 @@
         </activity>
         <activity
             android:name=".main_menu.HelpActivity"
-            android:label="@string/title_activity_help" >
+            android:label="@string/title_activity_help"
+            android:screenOrientation="landscape" >
         </activity>
     </application>
 

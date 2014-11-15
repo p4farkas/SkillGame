@@ -240,6 +240,7 @@ public class SolveItView extends GameAbstract {
         int width = getWidth();
         int height = getHeight();
 
+        scorePaint.setTextAlign(Paint.Align.LEFT);
         canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + score), 10, 20, scorePaint);
 
         scorePaint.setTextAlign(Paint.Align.CENTER);
