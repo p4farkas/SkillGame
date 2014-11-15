@@ -184,8 +184,6 @@ public class ServerThread implements Runnable {
 
                                 ConnectActivity.player_data = playerData;
                                 ConnectActivity.client_connected = true;
-                                //if (client_interface != null)
-                                //    client_interface.ClientConnected(playerData, context);
                             }
                         } else if (line.substring(0, 5).equals(pointString)) {
                             int point = Integer.parseInt(line.substring(6));

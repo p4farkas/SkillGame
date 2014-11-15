@@ -33,6 +33,7 @@ import hu.uniobuda.nik.androgamers.ResultAdapter;
 
 public class ProfileActivity extends Activity {
 
+    private final static String usernameFilePath = "User";
     private final int CAMERA_REQUEST = 1;
     private final int SELECT_PICTURE = 2;
     private ImageView userpic;
@@ -42,8 +43,6 @@ public class ProfileActivity extends Activity {
     private List<Result> results;
     private ResultAdapter adapter;
     private EditText nameLabel;
-    private final static String usernameFilePath = "User";
-
 
     //Kép betöltése belső tárolóból
     public static Bitmap loadImage(Context context) {
@@ -70,6 +69,47 @@ public class ProfileActivity extends Activity {
         byte[] base_decoded = Base64.decode(img_bytes, 0); //Base64
 
         return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length); //jpeg dekódolás
+    }
+
+    //read username from file
+    public static String getUsername(Context context) {
+        String text = "DefaultUser";
+        try {
+            //create if not exist
+            File file = new File(String.valueOf(context.getApplicationContext().getFileStreamPath(usernameFilePath)));
+            if (!file.exists()) {
+                setUsername(context, text);
+            }
+            //read
+            FileInputStream fis = context.openFileInput(usernameFilePath);
+            byte[] buffer = new byte[1024];
+            int len;
+            text = "";
+            while ((len = fis.read(buffer)) > 0) {
+                text += new String(buffer, 0, len);
+            }
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return text;
+    }
+
+    //save username to file
+    public static void setUsername(Context context, String username) {
+        try {
+            //save
+            FileOutputStream fos = context.openFileOutput(usernameFilePath, MODE_PRIVATE);
+            fos.write(username.getBytes());
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -143,13 +183,16 @@ public class ProfileActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         Bitmap photo = null;
+        Bitmap scaled_photo = null;
 
         //kép készítése kamerával
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             photo = (Bitmap) data.getExtras().get("data");
             if (photo == null)
                 return;
-            userpic.setImageBitmap(photo);
+
+            scaled_photo = Bitmap.createScaledBitmap(photo, 200, 200, false);
+            userpic.setImageBitmap(scaled_photo);
         }
         //Kép betöltése galériából
         else if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
@@ -166,12 +209,15 @@ public class ProfileActivity extends Activity {
             photo = BitmapFactory.decodeFile(picturePath);
             if (photo == null)
                 return;
-            userpic.setImageBitmap(photo);
+
+            scaled_photo = Bitmap.createScaledBitmap(photo, 200, 200, false);
+            userpic.setImageBitmap(scaled_photo);
         }
 
-        if (photo == null)
+        if (scaled_photo == null)
             return;
-        saveImage(photo);
+
+        saveImage(scaled_photo);
     }
 
     //Kép mentése belső tárolóra: jpeg és base64 kódolás
@@ -188,47 +234,6 @@ public class ProfileActivity extends Activity {
             fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
 
             fos.write(img_bytes);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //read username from file
-    public static String getUsername(Context context) {
-        String text = "DefaultUser";
-        try {
-            //create if not exist
-            File file = new File(String.valueOf(context.getApplicationContext().getFileStreamPath(usernameFilePath)));
-            if (!file.exists()) {
-                setUsername(context, text);
-            }
-            //read
-            FileInputStream fis = context.openFileInput(usernameFilePath);
-            byte[] buffer = new byte[1024];
-            int len;
-            text = "";
-            while ((len = fis.read(buffer)) > 0) {
-                text += new String(buffer, 0, len);
-            }
-            fis.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
-
-    //save username to file
-    public static void setUsername(Context context, String username) {
-        try {
-            //save
-            FileOutputStream fos = context.openFileOutput(usernameFilePath, MODE_PRIVATE);
-            fos.write(username.getBytes());
             fos.flush();
             fos.close();
         } catch (FileNotFoundException e) {

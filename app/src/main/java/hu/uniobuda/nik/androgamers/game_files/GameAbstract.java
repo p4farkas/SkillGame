@@ -4,6 +4,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
+interface INextGame {
+    void NextGame();
+}
+
 public abstract class GameAbstract extends View {
 
     public static final String SZINVALASZTO_NAME = "APP1";

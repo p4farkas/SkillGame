@@ -9,9 +9,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,22 +23,28 @@ public class ShootingView extends GameAbstract {
 
     private static List<Integer> gameRound;
     private static Random r = new Random();
+    private static INextGame next_game;
     private Handler handler;
-    private Paint paint;
+    private Paint scorePaint;
     private Context context;
     private Bitmap bg;
     private Handler back_handler;
     private Vibrator vibrator;
     private long startTime;
     private boolean started = false;
+    private boolean thread_run = true;
 
     public ShootingView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        paint = new Paint();
+        scorePaint = new Paint();
         this.context = context;
 
         Init();
+    }
+
+    public static void setNext_game(INextGame next_game) {
+        ShootingView.next_game = next_game;
     }
 
     //Processing pregenerated GameInit parameters
@@ -76,13 +80,18 @@ public class ShootingView extends GameAbstract {
     //set final result in GameAbstract
     @Override
     public void GetResult() {
-        game_points[2]=score;
+        game_points[2] = score;
     }
 
     //startup initialization
     @Override
     public void Init() {
 //        setInitParameters(ShootingView.getGameInitString());
+        scorePaint = new Paint();
+        scorePaint.setColor(Color.BLACK);
+        scorePaint.setTextSize(18);
+        scorePaint.setTextAlign(Paint.Align.LEFT);
+
         score = 0;
         back_handler = new Handler();
         handler = new Handler();
@@ -90,6 +99,9 @@ public class ShootingView extends GameAbstract {
             @Override
             public void run() {
                 do {
+                    if (!thread_run)
+                        return;
+
                     if (started) {
                         try {
                             Thread.sleep(1000);
@@ -100,9 +112,11 @@ public class ShootingView extends GameAbstract {
                         bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.cowboy);
                         postInvalidate();
                     }
-                } while (current_game < GAME_COUNT);
+                } while (current_game < GAME_COUNT && thread_run);
                 GetResult();
-                ShootingActivity.NextGame(context);
+
+                if (next_game != null)
+                    next_game.NextGame();
             }
         });
         time_thread.start();
@@ -121,7 +135,6 @@ public class ShootingView extends GameAbstract {
         //get game parameters predefined by setInitParameters
         int delayTime = gameRound.get(0);
         gameRound.remove(0);
-
 
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         handler.postDelayed(new Runnable() {
@@ -173,10 +186,7 @@ public class ShootingView extends GameAbstract {
         int y = (height - bg.getHeight()) >> 1;
         canvas.drawBitmap(bg, x, y, null);
 
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(18);
-        paint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(R.string.score_label + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
+        canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + score), 10, 20, scorePaint);
     }
 
     //detecting shooting
@@ -192,7 +202,7 @@ public class ShootingView extends GameAbstract {
             else {
                 started = false;
                 GameInit();
-                score-=700;
+                score -= 700;
                 postInvalidate();
             }
         }

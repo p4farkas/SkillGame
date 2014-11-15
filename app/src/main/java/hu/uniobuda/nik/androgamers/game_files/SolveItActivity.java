@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,7 +15,8 @@ import hu.uniobuda.nik.androgamers.R;
 import hu.uniobuda.nik.androgamers.ResultActivity;
 
 
-public class SolveItActivity extends Activity {
+public class SolveItActivity extends Activity implements INextGame {
+    private static Handler handler;
     View.OnClickListener onClickListenerSolveIt = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -31,15 +34,26 @@ public class SolveItActivity extends Activity {
     private Button second;
     private Button third;
 
-    public static void ShowResult(Context context) {
-        Intent intent = new Intent(context, ResultActivity.class);
-        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-        context.startActivity(intent);
+    @Override
+    public void NextGame() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(SolveItActivity.this, ResultActivity.class);
+                intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        handler = new Handler(Looper.getMainLooper());
+
+        SolveItView.setNext_game(this);
+
         setContentView(R.layout.activity_solve_it);
         first = (Button) findViewById(R.id.first_answer);
         first.setOnClickListener(onClickListenerSolveIt);
@@ -62,6 +76,4 @@ public class SolveItActivity extends Activity {
         third.setText(sPrefs.getString("thirdText", ""));
         third.setTag(sPrefs.getString("thirdTag", ""));
     }
-
-
 }

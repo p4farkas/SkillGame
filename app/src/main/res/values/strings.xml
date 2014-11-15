@@ -27,8 +27,8 @@
     <string name="result_score_label">Végső pontszám</string>
     <string name="new_game_button_label">Új játék</string>
     <string name="result_myscore_label">Én: 0 pont</string>
-    <string name="result_enemyscore_label">Ő: 0 pont</string>
-    <string name="help_button_text">\?</string>
+    <string name="result_enemyscore_label">Játékostárs: 0 pont</string>
+    <string name="help_button_text">Leírás</string>
     <string name="title_activity_help">HelpActivity</string>
     <string name="help_content_text">Egy kétszemélyes, hálózati játékszoftver, melyben időre kell az alábbi feladatokat végrehajtani:</string>
     <string name="help_app1_text">Színválasztó</string>

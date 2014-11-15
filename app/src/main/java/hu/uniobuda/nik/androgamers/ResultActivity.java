@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
 import hu.uniobuda.nik.androgamers.main_menu.DataBaseAR;
@@ -34,7 +35,7 @@ public class ResultActivity extends Activity implements IFinalResult {
                     return;
 
                 final_point2 = point;
-                pointtext2.setText("Ő: " + final_point2 + " pont");
+                pointtext2.setText("Játékostárs: " + final_point2 + " pont");
 
                 if (final_point > final_point2)
                     result_text.setText("Gratulálunk, nyertél!");
@@ -44,6 +45,7 @@ public class ResultActivity extends Activity implements IFinalResult {
                     result_text.setText("Döntetlen!");
 
                 point_set = true;
+                new_game_button.setEnabled(true);
             }
         });
     }
@@ -52,6 +54,8 @@ public class ResultActivity extends Activity implements IFinalResult {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
+        new_game_button.setEnabled(false);
 
         ClientThread.setFinal_result(this);
         ServerThread.setFinal_result(this);
@@ -77,5 +81,7 @@ public class ResultActivity extends Activity implements IFinalResult {
         dbAR.insertHighScore(final_point);
 
         Connection.SendMessage("POINT:" + final_point);
+
+        Toast.makeText(ResultActivity.this, "Várakozás a játékostárs eredményére...", Toast.LENGTH_LONG).show();
     }
 }

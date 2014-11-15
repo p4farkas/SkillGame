@@ -2,6 +2,7 @@ package hu.uniobuda.nik.androgamers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
@@ -68,14 +69,16 @@ public class ClientThread implements Runnable {
     public static boolean SendMessage(String message) {
         try {
 
-            if (outstream == null && server_socket != null) {
+            if (server_socket == null)
+                return false;
+
+            if (outstream == null)
                 outstream = server_socket.getOutputStream();
 
+            if (printWriter == null)
                 printWriter = new PrintWriter(outstream, true);
-            }
 
             printWriter.println(message);
-
             return true;
 
         } catch (IOException e) {
@@ -141,16 +144,18 @@ public class ClientThread implements Runnable {
             while (client_run && !Thread.currentThread().isInterrupted()) {
                 line = bufferedReader.readLine();
 
-                if (line.substring(0, 2).equals("OK")) {
-                    ConnectActivity.server_connected = true;
-                    //if (server_interface != null)
-                    //    server_interface.ServerConnected(context);
-                } else if (line.substring(0, 5).equals(pointString)) {
-                    int point = Integer.parseInt(line.substring(6));
-                    if (final_result != null)
-                        final_result.getFinalPoint(point);
+                if (line != null) {
+                    if (line.substring(0, 2).equals("OK")) {
+                        ConnectActivity.server_connected = true;
+                        //if (server_interface != null)
+                        //    server_interface.ServerConnected(context);
+                    } else if (line.substring(0, 5).equals(pointString)) {
+                        int point = Integer.parseInt(line.substring(6));
+                        if (final_result != null)
+                            final_result.getFinalPoint(point);
 
-                    SendMessage("POINT:" + GameAbstract.getFinalPoint());
+                        SendMessage("POINT:" + GameAbstract.getFinalPoint());
+                    }
                 }
             }
 
@@ -163,6 +168,10 @@ public class ClientThread implements Runnable {
     //A kép Base64 kódolása és küldése
     public boolean SendImage(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        if (bitmap == null) {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.anonym);
+        }
+
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] byteArray = stream.toByteArray();
         long comp_size = byteArray.length;

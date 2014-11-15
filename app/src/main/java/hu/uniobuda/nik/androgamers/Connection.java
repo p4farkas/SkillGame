@@ -32,8 +32,8 @@ public class Connection {
     }
 
     public static void CloseConnection() {
-        //ServerThread.server_run = false;
-        //ClientThread.client_run = false;
+        ServerThread.server_run = false;
+        ClientThread.client_run = false;
 
         if (conn_thread != null) {
             conn_thread.interrupt();

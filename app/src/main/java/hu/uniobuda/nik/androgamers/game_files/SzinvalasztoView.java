@@ -35,8 +35,11 @@ public class SzinvalasztoView extends GameAbstract {
     private Bitmap canvasBitmap;
     private Paint canvasPaint;
     private Paint textPaint;
+    private Paint scorePaint;
     private int final_point = 0;
     private Context context;
+
+    private boolean thread_run = true;
 
     public SzinvalasztoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -113,6 +116,11 @@ public class SzinvalasztoView extends GameAbstract {
         textPaint.setAntiAlias(true);
         textPaint.setStrokeCap(Paint.Cap.ROUND);
 
+        scorePaint = new Paint();
+        scorePaint.setColor(Color.BLACK);
+        scorePaint.setTextSize(18);
+        scorePaint.setTextAlign(Paint.Align.LEFT);
+
         old_time = System.currentTimeMillis();
 
         //Háttérszálon figyeljük az időt
@@ -120,15 +128,20 @@ public class SzinvalasztoView extends GameAbstract {
             @Override
             public void run() {
                 do {
+                    if (!thread_run)
+                        break;
+
                     long current_time = System.currentTimeMillis();
 
                     if ((current_time - old_time) >= GAME_MILLIS) {
                         current_game++;
                         old_time = current_time;
-                        postInvalidate();
+                        GameInit();
                     }
 
                 } while (current_game < GAME_COUNT);
+
+                game_points[0] = final_point;
 
                 if (next_game != null)
                     next_game.NextGame();
@@ -155,6 +168,8 @@ public class SzinvalasztoView extends GameAbstract {
         super.onDraw(canvas);
 
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+
+        canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + final_point), 10, 20, scorePaint);
 
         if (color_codes == null || color_names == null || current_game > 4)
             return;
@@ -199,8 +214,8 @@ public class SzinvalasztoView extends GameAbstract {
     //Az eredmény kiértékelése
     @Override
     public void GetResult() {
-        if (name_index == code_index)
-            final_point += 10;
+        if (name_indices[current_game] == code_indices[current_game])
+            final_point += 100;
         else
             Log.i("Szinvalaszto", "NEM TALÁLT");
 
@@ -210,8 +225,10 @@ public class SzinvalasztoView extends GameAbstract {
             GameInit();
         else {
             game_points[0] = final_point;
-            if (time_thread != null)
+            if (time_thread != null) {
+                thread_run = false;
                 time_thread.interrupt();
+            }
             if (next_game != null)
                 next_game.NextGame();
         }

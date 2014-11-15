@@ -11,8 +11,7 @@ import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import hu.uniobuda.nik.androgamers.R;
+import java.util.regex.Pattern;
 
 public class SolveItView extends GameAbstract {
 
@@ -27,18 +26,23 @@ public class SolveItView extends GameAbstract {
     static int score;
     private static List<Integer> gameRound;
     private static Random r = new Random();
+    private static INextGame next_game;
     private String question;
     private SharedPreferences sPrefs;
     private Handler handler;
-    private Paint paint;
+    private Paint scorePaint;
     private Context context;
 
     public SolveItView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        paint = new Paint();
+        scorePaint = new Paint();
         this.context = context;
         sPrefs = context.getSharedPreferences("solveItButtons", Context.MODE_PRIVATE);
         Init();
+    }
+
+    public static void setNext_game(INextGame next_game) {
+        SolveItView.next_game = next_game;
     }
 
     //Processing pregenerated GameInit parameters
@@ -114,6 +118,11 @@ public class SolveItView extends GameAbstract {
 //        }
 //        badAnswers.remove(Character.valueOf(key));
 
+        scorePaint = new Paint();
+        scorePaint.setColor(Color.BLACK);
+        scorePaint.setTextSize(18);
+        scorePaint.setTextAlign(Paint.Align.LEFT);
+
         score = 0;
         old_time = System.currentTimeMillis();
         handler = new Handler();
@@ -137,7 +146,9 @@ public class SolveItView extends GameAbstract {
 
                 } while (current_game < GAME_COUNT);
                 GetResult();
-                SolveItActivity.ShowResult(context);
+
+                if (next_game != null)
+                    next_game.NextGame();
             }
         });
         time_thread.start();
@@ -150,18 +161,18 @@ public class SolveItView extends GameAbstract {
     protected void GameInit() {
         current_game++;
 
-//        //equation and solution selection
-//        selectedNumber = r.nextInt(equations.length);
-//        selected = equations[selectedNumber];
-//        key = selected.charAt(r.nextInt(selected.length()));
-//        question = selected.replaceFirst(Pattern.quote(Character.toString(key)), "?");
-//
+/*//        //equation and solution selection
+        selectedNumber = r.nextInt(equations.length);
+        selected = equations[selectedNumber];
+        key = selected.charAt(r.nextInt(selected.length()));
+        question = selected.replaceFirst(Pattern.quote(Character.toString(key)), "?");
+
 //        //generating other answers
-//        int badAnswerNumber1 = r.nextInt(badAnswers.size());
-//        firstBadAnswer = badAnswers.get(badAnswerNumber1);
-//        badAnswers.remove(badAnswers.get(badAnswerNumber1));
-//        int badAnswerNumber2 = r.nextInt(badAnswers.size());
-//        secondBadAnswer = badAnswers.get(badAnswerNumber2);
+        int badAnswerNumber1 = r.nextInt(badAnswers.size());
+        firstBadAnswer = badAnswers.get(badAnswerNumber1);
+        badAnswers.remove(badAnswers.get(badAnswerNumber1));
+        int badAnswerNumber2 = r.nextInt(badAnswers.size());
+        secondBadAnswer = badAnswers.get(badAnswerNumber2);*/
 
         selectedNumber = gameRound.get(0) - 48;
         gameRound.remove(0);
@@ -169,6 +180,8 @@ public class SolveItView extends GameAbstract {
         int a = gameRound.get(0);
         gameRound.remove(0);
         key = (char) a;
+        question = selected.replaceFirst(Pattern.quote(Character.toString(key)), "?");
+
         a = gameRound.get(0);
         gameRound.remove(0);
         firstBadAnswer = (char) a;
@@ -184,32 +197,32 @@ public class SolveItView extends GameAbstract {
                 //set solution answer for #1
                 sPrefs.edit().putString("firstText", String.valueOf(key)).apply();
                 sPrefs.edit().putString("firstTag", "PASS").apply();
-//                //set other answer for #2
+                //set other answer for #2
                 sPrefs.edit().putString("secondText", String.valueOf(firstBadAnswer)).apply();
                 sPrefs.edit().putString("secondTag", "FAIL").apply();
-//                //set other answer for #3
+                //set other answer for #3
                 sPrefs.edit().putString("thirdText", String.valueOf(secondBadAnswer)).apply();
                 sPrefs.edit().putString("thirdTag", "FAIL").apply();
                 break;
             case 1:
-//                //set solution answer for #2
+                //set solution answer for #2
                 sPrefs.edit().putString("secondText", String.valueOf(key)).apply();
                 sPrefs.edit().putString("secondTag", "PASS").apply();
-//                //set other answer for #1
+                //set other answer for #1
                 sPrefs.edit().putString("firstText", String.valueOf(firstBadAnswer)).apply();
                 sPrefs.edit().putString("firstTag", "FAIL").apply();
-//                //set other answer for #3
+                //set other answer for #3
                 sPrefs.edit().putString("thirdText", String.valueOf(secondBadAnswer)).apply();
                 sPrefs.edit().putString("thirdTag", "FAIL").apply();
                 break;
             case 2:
-//                //set solution answer for #3
+                //set solution answer for #3
                 sPrefs.edit().putString("thirdText", String.valueOf(key)).apply();
                 sPrefs.edit().putString("thirdTag", "PASS").apply();
-//                //set other answer for #1
+                //set other answer for #1
                 sPrefs.edit().putString("firstText", String.valueOf(firstBadAnswer)).apply();
                 sPrefs.edit().putString("firstTag", "FAIL").apply();
-//                //set other answer for #2
+                //set other answer for #2
                 sPrefs.edit().putString("secondText", String.valueOf(secondBadAnswer)).apply();
                 sPrefs.edit().putString("secondTag", "FAIL").apply();
                 break;
@@ -227,12 +240,9 @@ public class SolveItView extends GameAbstract {
         int width = getWidth();
         int height = getHeight();
 
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(18);
-        paint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(R.string.score_label + Integer.toString(score), 0, 0 + paint.getTextSize(), paint);
+        canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + score), 10, 20, scorePaint);
 
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(question, width >> 1, height >> 2, paint);
+        scorePaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(question, width >> 1, height >> 2, scorePaint);
     }
 }

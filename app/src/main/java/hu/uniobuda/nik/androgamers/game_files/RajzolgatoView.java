@@ -8,8 +8,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -21,6 +19,7 @@ public class RajzolgatoView extends GameAbstract {
     private static final int POINT_LENGTH = 50;
     static Point[] points;
     private static Random rand = new Random();
+    private static INextGame next_game;
     float start_x = 0;
     float start_y = 0;
     float end_x = 0;
@@ -32,16 +31,15 @@ public class RajzolgatoView extends GameAbstract {
     private Paint out_pointPaint;
     private Paint canvasPaint;
     private Paint rectPaint;
+    private Paint scorePaint;
     private Canvas drawCanvas;
     private Bitmap canvasBitmap;
     private int back_color;
     private Rect bounding_rect;
     private Rect draw_rect;
-
     private int final_point = 0;
 
     private Context context;
-    private Handler handler;
 
     public RajzolgatoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,6 +47,10 @@ public class RajzolgatoView extends GameAbstract {
         this.isInEditMode();
 
         Init();
+    }
+
+    public static void setNext_game(INextGame next_game) {
+        RajzolgatoView.next_game = next_game;
     }
 
     //Kezdőértékek beállítása a paraméterben átadott sorból
@@ -121,42 +123,48 @@ public class RajzolgatoView extends GameAbstract {
         rectPaint.setStrokeCap(Paint.Cap.ROUND);
         rectPaint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
 
+        scorePaint = new Paint();
+        scorePaint.setColor(Color.BLACK);
+        scorePaint.setTextSize(18);
+        scorePaint.setTextAlign(Paint.Align.LEFT);
+
         out_indices = new boolean[POINT_LENGTH];
 
         actual_points = new Point[POINT_LENGTH];
 
-        old_time = System.currentTimeMillis();
-        handler = new Handler(Looper.getMainLooper());
-
-        //Háttérszálon figyeljük az időt
-        time_thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                do {
-                    long current_time = System.currentTimeMillis();
-
-                    if ((current_time - old_time) >= GAME_MILLIS) {
-                        current_game++;
-                        old_time = current_time;
-                        GameInit();
-                    }
-
-                } while (current_game < GAME_COUNT - 1);
-
-                game_points[1] = final_point;
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        RajzolgatoActivity.NextGame(context);
-                    }
-                });
-            }
-        });
+//        old_time = System.currentTimeMillis();
+//
+//        //Háttérszálon figyeljük az időt
+//        time_thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                do {
+//                    if (!thread_run)
+//                        break;
+//
+//                    long current_time = System.currentTimeMillis();
+//
+//                    if ((current_time - old_time) >= GAME_MILLIS) {
+//                        current_game++;
+//                        old_time = current_time;
+//                        GameInit();
+//                    }
+//
+//                } while (current_game < GAME_COUNT - 1 && thread_run);
+//
+//                if (!thread_run)
+//                    return;
+//
+//                game_points[1] = final_point;
+//
+//                thread_run2 = false;
+//                RajzolgatoActivity.NextGame(context);
+//            }
+//        });
 
         GameInit();
 
-        time_thread.start();
+//        time_thread.start();
     }
 
     @Override
@@ -190,6 +198,8 @@ public class RajzolgatoView extends GameAbstract {
 
         drawCanvas = canvas;
         drawCanvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
+
+        canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + final_point), 10, 20, scorePaint);
 
         if (actual_points.length == 0)
             return;
@@ -270,36 +280,11 @@ public class RajzolgatoView extends GameAbstract {
         final_point += getScore(bounding_area, draw_area, faults);
 
         current_game++;
-        old_time = System.currentTimeMillis();
 
         invalidate();
 
         //Várakozás két menet között...
-        new Thread(new Runnable() {
-            long start = System.currentTimeMillis();
-            boolean run = true;
-
-            @Override
-            public void run() {
-                while (run) {
-                    long current = System.currentTimeMillis();
-                    if ((current - start) >= 1000) {
-                        run = false;
-                        if (current_game < GAME_COUNT - 1)
-                            GameInit();
-                        else {
-                            //time_thread.interrupt();
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    RajzolgatoActivity.NextGame(context);
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        }).start();
+        new Thread(new Runner()).start();
     }
 
     //Visszatérési értéke a random pontok legkisebb befoglaló téglalapja
@@ -335,5 +320,29 @@ public class RajzolgatoView extends GameAbstract {
             score = 1000 - Math.abs(draw_area - bounding_area) / 100 - faults * FAULT_MUL;
 
         return (score < 0) ? 0 : score;
+    }
+
+    //Várakozás
+    private class Runner implements Runnable {
+        long start = System.currentTimeMillis();
+        boolean thread_run = true;
+
+        @Override
+        public void run() {
+            while (thread_run) {
+                long current = System.currentTimeMillis();
+                if ((current - start) >= 1000) {
+                    thread_run = false;
+                    if (current_game < GAME_COUNT)
+                        GameInit();
+                    else {
+                        thread_run = false;
+
+                        if (next_game != null)
+                            next_game.NextGame();
+                    }
+                }
+            }
+        }
     }
 }
