@@ -43,5 +43,6 @@
     <string name="dialog_app2_title">Befoglaló játék</string>
     <string name="dialog_app3_title">Párbajozó játék</string>
     <string name="dialog_app4_title">Számolgató játék</string>
+    <string name="anonym_text">Anonymus</string>
 
 </resources>

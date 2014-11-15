@@ -17,8 +17,7 @@
         android:layout_marginTop="15dp"
         android:paddingTop="8dp"
         android:text="@string/result_score_label"
-        android:textSize="30sp"
-        />
+        android:textSize="30sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,6 +25,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
+
         <TextView
             android:id="@+id/final_result1"
             android:layout_width="wrap_content"
@@ -33,8 +33,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/result_myscore_label"
-            android:textSize="@dimen/text_size"
-            />
+            android:textSize="@dimen/text_size" />
 
         <TextView
             android:id="@+id/final_result2"
@@ -43,9 +42,8 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="@string/result_enemyscore_label"
-            android:textSize="@dimen/text_size"
-            />
-        </LinearLayout>
+            android:textSize="@dimen/text_size" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/result_text"
@@ -57,13 +55,12 @@
         android:paddingTop="8dp"
         android:text=""
         android:textColor="#ff68a823"
-        android:textSize="45sp"
-        />
+        android:textSize="45sp" />
 
     <Button
         android:id="@+id/new_game_button"
         style="@style/button_style"
         android:layout_marginTop="15dp"
-        android:text="@string/new_game_button_label"/>
+        android:text="@string/new_game_button_label" />
 
 </LinearLayout>

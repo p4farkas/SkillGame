@@ -13,19 +13,19 @@
     <Button
         android:id="@+id/start_button"
         style="@style/button_style"
-        android:text="@string/start_button"/>
+        android:text="@string/start_button" />
 
     <Button
         android:id="@+id/profil_button"
         style="@style/button_style"
         android:layout_below="@id/start_button"
-        android:text="@string/profil_button"/>
+        android:text="@string/profil_button" />
 
     <Button
         android:id="@+id/info_button"
         style="@style/button_style"
         android:layout_below="@id/profil_button"
-        android:text="@string/info_button"/>
+        android:text="@string/info_button" />
 
     <Button
         android:id="@+id/help_button"
@@ -36,6 +36,6 @@
         android:background="@android:color/transparent"
         android:text="@string/help_button_text"
         android:textSize="25sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 </RelativeLayout>

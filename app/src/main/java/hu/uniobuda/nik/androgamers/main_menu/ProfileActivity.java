@@ -1,7 +1,9 @@
 package hu.uniobuda.nik.androgamers.main_menu;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +45,9 @@ public class ProfileActivity extends Activity {
     private ListView listview;
     private List<Result> results;
     private ResultAdapter adapter;
-    private EditText nameLabel;
+    private TextView nameLabel;
+
+    private EditText txtUserName;
 
     //Kép betöltése belső tárolóból
     public static Bitmap loadImage(Context context) {
@@ -118,15 +123,35 @@ public class ProfileActivity extends Activity {
         setContentView(R.layout.activity_profile);
 
         //load username
-        nameLabel = (EditText) findViewById(R.id.name_label);
+        nameLabel = (TextView) findViewById(R.id.name_label);
         nameLabel.setText(getUsername(this));
-        nameLabel.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        nameLabel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    if (nameLabel.getText().toString().matches("")) return;
-                    setUsername(ProfileActivity.this, nameLabel.getText().toString().trim());
-                }
+            public void onClick(View view) {
+                txtUserName = new EditText(ProfileActivity.this);
+                txtUserName.setHint("Anonymus");
+                txtUserName.setMaxWidth(200);
+                txtUserName.setMaxLines(1);
+
+                new AlertDialog.Builder(ProfileActivity.this)
+                        .setTitle("Felhasználónév")
+                        .setMessage("Add meg az új felhasználóneved:")
+                        .setView(txtUserName)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String name = txtUserName.getText().toString().trim();
+                                if (name.matches("")) return;
+
+                                setUsername(ProfileActivity.this, name);
+                                nameLabel.setText(name);
+                            }
+                        })
+                        .setNegativeButton("Mégse", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         });
 
@@ -182,7 +207,7 @@ public class ProfileActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap photo = null;
+        Bitmap photo;
         Bitmap scaled_photo = null;
 
         //kép készítése kamerával
@@ -229,7 +254,7 @@ public class ProfileActivity extends Activity {
         byte[] img_bytes = Base64.encode(byteArray, 0);
 
         String FILENAME = "UserPic";
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         try {
             fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
 
