@@ -106,17 +106,6 @@ public class SolveItView extends GameAbstract {
     //startup initialization
     @Override
     public void Init() {
-//        //generating bad answers
-//        badAnswers.add('*');
-//        badAnswers.add('/');
-//        badAnswers.add('+');
-//        badAnswers.add('-');
-//        badAnswers.add('(');
-//        badAnswers.add(')');
-//        for (int i=0; i<10; i++){
-//            badAnswers.add(Character.forDigit(i,10));
-//        }
-//        badAnswers.remove(Character.valueOf(key));
 
         scorePaint = new Paint();
         scorePaint.setColor(Color.BLACK);
@@ -161,19 +150,6 @@ public class SolveItView extends GameAbstract {
     protected void GameInit() {
         current_game++;
 
-/*//        //equation and solution selection
-        selectedNumber = r.nextInt(equations.length);
-        selected = equations[selectedNumber];
-        key = selected.charAt(r.nextInt(selected.length()));
-        question = selected.replaceFirst(Pattern.quote(Character.toString(key)), "?");
-
-//        //generating other answers
-        int badAnswerNumber1 = r.nextInt(badAnswers.size());
-        firstBadAnswer = badAnswers.get(badAnswerNumber1);
-        badAnswers.remove(badAnswers.get(badAnswerNumber1));
-        int badAnswerNumber2 = r.nextInt(badAnswers.size());
-        secondBadAnswer = badAnswers.get(badAnswerNumber2);*/
-
         selectedNumber = gameRound.get(0) - 48;
         gameRound.remove(0);
         selected = equations[selectedNumber];
@@ -188,7 +164,6 @@ public class SolveItView extends GameAbstract {
         a = gameRound.get(0);
         gameRound.remove(0);
         secondBadAnswer = (char) a;
-
 
         //random order
         int solution = r.nextInt(3);
@@ -238,12 +213,13 @@ public class SolveItView extends GameAbstract {
         super.onDraw(canvas);
 
         int width = getWidth();
-        int height = getHeight();
 
         scorePaint.setTextAlign(Paint.Align.LEFT);
+        scorePaint.setTextSize(18);
         canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + score), 10, 20, scorePaint);
 
         scorePaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(question, width >> 1, height >> 2, scorePaint);
+        scorePaint.setTextSize(25);
+        canvas.drawText(question, width >> 1, 50, scorePaint);
     }
 }

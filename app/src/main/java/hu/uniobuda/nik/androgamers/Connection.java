@@ -10,12 +10,14 @@ public class Connection {
     public Connection(CONNECTION_TYPE type, String ip, int port, Context context) {
         switch (type) {
             case SERVER: {
+                //Szerver indítása - példány lekérése
                 conn_thread = new Thread(ServerThread.getInstance(port, context));
                 conn_thread.start();
                 server = true;
                 break;
             }
             case CLIENT: {
+                //Kliens indítása - példány lekérése
                 conn_thread = new Thread(ClientThread.getInstance(ip, port, context));
                 conn_thread.start();
                 server = false;
@@ -24,6 +26,7 @@ public class Connection {
         }
     }
 
+    //Szöveges üzenet küldése
     public static void SendMessage(String message) {
         if (server)
             ServerThread.SendMessage(message);
@@ -31,6 +34,7 @@ public class Connection {
             ClientThread.SendMessage(message);
     }
 
+    //Kapcsolat lezárása biztonságosan
     public static void CloseConnection() {
         ServerThread.server_run = false;
         ClientThread.client_run = false;

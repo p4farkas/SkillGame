@@ -13,6 +13,7 @@ public class ShootingActivity extends Activity implements INextGame {
 
     private static Handler handler;
 
+    //Következő játék
     @Override
     public void NextGame() {
         handler.post(new Runnable() {

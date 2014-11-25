@@ -23,7 +23,6 @@ import hu.uniobuda.nik.androgamers.game_files.ShootingView;
 import hu.uniobuda.nik.androgamers.game_files.SolveItView;
 import hu.uniobuda.nik.androgamers.game_files.SzinvalasztoView;
 import hu.uniobuda.nik.androgamers.main_menu.ConnectActivity;
-import hu.uniobuda.nik.androgamers.main_menu.IServerConnected;
 import hu.uniobuda.nik.androgamers.main_menu.ProfileActivity;
 
 public class ClientThread implements Runnable {
@@ -32,14 +31,12 @@ public class ClientThread implements Runnable {
     public static String ip = "192.168.0.220";
     public static ClientThread clientThread = null;
     public static boolean client_run = false;
-    private static IServerConnected server_interface;
     private static Socket server_socket;
     private static OutputStream outstream;
     private static InputStreamReader streamreader;
     private static PrintWriter printWriter;
     private static IFinalResult final_result;
     private final String pointString = "POINT";
-    private final String initString = "INIT";
     private Context context;
 
     private ClientThread(String ip_new, int port_new, Context context_new) {
@@ -51,10 +48,6 @@ public class ClientThread implements Runnable {
 
     public static void setFinal_result(IFinalResult _final_result) {
         final_result = _final_result;
-    }
-
-    public static void setServer_interface(IServerConnected _server_interface) {
-        server_interface = _server_interface;
     }
 
     //Singleton
@@ -121,39 +114,39 @@ public class ClientThread implements Runnable {
     public void run() {
         try {
             server_socket = new Socket(ip, port);
-            Log.i("Client", "Connected to server: " + ip + ":" + port);
 
             streamreader = new InputStreamReader(server_socket.getInputStream());
 
-            String init_data = getGameInitString();
-            SendMessage(init_data);
-            Log.i("Client", "Init data sent");
-
-//            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View activity_profile = inflater.inflate(R.layout.activity_profile, null);
-//            ImageView image = (ImageView) activity_profile.findViewById(R.id.userpic);
+            String init_data = getGameInitString(); //A játékok random kezdőértékei
+            SendMessage(init_data); //Játék kezdeti paraméterek elküldése
 
             SendImage(ProfileActivity.loadImage(context)); //Kép elküldése
-            Log.i("Client", "Image sent");
 
             client_run = true;
 
             BufferedReader bufferedReader = new BufferedReader(streamreader);
 
-            String line = "";
+            String line;
             while (client_run && !Thread.currentThread().isInterrupted()) {
                 line = bufferedReader.readLine();
 
                 if (line != null) {
+                    //A kliens sikeresen kapcsolódott a szerverhez
                     if (line.substring(0, 2).equals("OK")) {
                         ConnectActivity.server_connected = true;
-                        //if (server_interface != null)
-                        //    server_interface.ServerConnected(context);
-                    } else if (line.substring(0, 5).equals(pointString)) {
-                        int point = Integer.parseInt(line.substring(6));
-                        if (final_result != null)
-                            final_result.getFinalPoint(point);
 
+                    }//A szerver elküldte az összpontszámát és várakozik a kliensére
+                    else if (line.substring(0, 5).equals(pointString)) {
+                        int point = Integer.parseInt(line.substring(6));
+                        do {
+                            //Várakozás a játék befejezésére
+                        } while (!GameAbstract.isGame_finished());
+
+                        if (final_result != null) {
+                            final_result.getFinalPoint(point);
+                        }
+
+                        //Összpontszám elküldése
                         SendMessage("POINT:" + GameAbstract.getFinalPoint());
                     }
                 }
@@ -172,6 +165,7 @@ public class ClientThread implements Runnable {
             bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.anonym);
         }
 
+        //JPEG kódolás
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] byteArray = stream.toByteArray();
         long comp_size = byteArray.length;
@@ -179,8 +173,8 @@ public class ClientThread implements Runnable {
         byte[] image = Base64.encode(byteArray, 0);
         int base64_size = image.length;
 
-        //A játékos neve
-        String player_message = "Béla";
+        //A játékos nevének lekérése
+        String player_message = ProfileActivity.getUsername(context);
         SendMessage("PLAY:" + player_message);
 
         //Header

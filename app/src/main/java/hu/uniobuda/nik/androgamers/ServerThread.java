@@ -17,15 +17,14 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import hu.uniobuda.nik.androgamers.game_files.GameAbstract;
 import hu.uniobuda.nik.androgamers.main_menu.ConnectActivity;
-import hu.uniobuda.nik.androgamers.main_menu.IClientConnected;
 
 public class ServerThread implements Runnable {
 
     public static int port = 4444;
     public static boolean server_run = false;
     private static ServerThread serverThread = null;
-    private static IClientConnected client_interface;
     private static Socket clientSocket;
     private static OutputStream outstream;
     private static PrintWriter printWriter;
@@ -37,7 +36,6 @@ public class ServerThread implements Runnable {
     private ServerSocket serverSocket;
     private PlayerData playerData;
     private Context context;
-    private String initdataString;
 
     private ServerThread(int port_new, Context context_new) {
         port = port_new;
@@ -46,10 +44,6 @@ public class ServerThread implements Runnable {
 
     public static void setFinal_result(IFinalResult _final_result) {
         final_result = _final_result;
-    }
-
-    public static void setClient_interface(IClientConnected _client_interface) {
-        client_interface = _client_interface;
     }
 
     //Singleton
@@ -102,7 +96,7 @@ public class ServerThread implements Runnable {
 
         try {
             serverSocket = new ServerSocket(port);
-            Log.i("Server", "Server is listening on " + port);
+            //A szerver a megadott porton várakozik...
 
         } catch (IOException e) {
             Log.e("Server - ServerThread", e.getMessage());
@@ -113,9 +107,6 @@ public class ServerThread implements Runnable {
         while (server_run && !Thread.currentThread().isInterrupted()) {
 
             try {
-
-                //initdataString = getGameInitString(); //A játékok random kezdőértékei
-
                 clientSocket = serverSocket.accept();
 
                 CommunicationThread commThread = new CommunicationThread();
@@ -136,20 +127,17 @@ public class ServerThread implements Runnable {
 
             try {
 
-                String[] client_address = clientSocket.getRemoteSocketAddress()
-                        .toString().split(":");
+                //Kliens adatok
+                //String[] client_address = clientSocket.getRemoteSocketAddress()
+                //        .toString().split(":");
 
-                final String ip = client_address[0].substring(1); //Kliens IP
-                final String port = client_address[1]; //Kliens port
-
-                Log.i("Server", "Client: " + ip + ":" + port);
+                //final String ip = client_address[0].substring(1); //Kliens IP
+                //final String port = client_address[1]; //Kliens port
 
                 this.input_stream = clientSocket.getInputStream();
                 input = new BufferedReader(new InputStreamReader(input_stream));
 
-                Log.i("Server", "Receiving...");
-
-                //SendMessage(initdataString); //Játék kezdeti paraméterek elküldése
+                //Adatok fogadása...
 
             } catch (IOException e) {
                 Log.e("Server - CommThread", e.getMessage());
@@ -165,14 +153,14 @@ public class ServerThread implements Runnable {
 
                     if (line != null) {
 
-                        //A játékos nevét kaptuk meg
+                        //A játékos nevének fogadása
                         if (line.substring(0, 4).equals(playerString)) {
                             String player_name = line.split(":")[1];
                             if (playerData == null) playerData = new PlayerData();
                             playerData.setName(player_name);
                             Log.i("Server", "Player: " + player_name);
                         }
-                        //A játékos képét kaptuk meg
+                        //A játékos képének fogadása
                         else if (line.substring(0, 3).equals(imgString)) {
 
                             final Bitmap bitmap = getImage(input, line);
@@ -185,11 +173,20 @@ public class ServerThread implements Runnable {
                                 ConnectActivity.player_data = playerData;
                                 ConnectActivity.client_connected = true;
                             }
-                        } else if (line.substring(0, 5).equals(pointString)) {
+                        } //Összpontszám fogadása
+                        else if (line.substring(0, 5).equals(pointString)) {
                             int point = Integer.parseInt(line.substring(6));
+
+                            do {
+                                //Várakozás a játék befejezésére
+                            } while (!GameAbstract.isGame_finished());
+
                             if (final_result != null) {
                                 final_result.getFinalPoint(point);
                             }
+
+                            //Összpontszám elküldése
+                            SendMessage("POINT:" + GameAbstract.getFinalPoint());
                         } else if (line.substring(0, 4).equals(initString)) {
                             setGameInitString(line);
                         }
@@ -203,7 +200,7 @@ public class ServerThread implements Runnable {
         //Egy sor kiolvasása a streamből
         private String getLine(BufferedReader in) {
 
-            String in_line = null;
+            String in_line;
 
             try {
                 in_line = in.readLine();
@@ -254,14 +251,15 @@ public class ServerThread implements Runnable {
                     byte[] base_decoded = Base64.decode(img_bytes, 0); //Base64 dekódolás
 
                     if (jpeg_length == base_decoded.length) {
-                        return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length); //jpeg dekódolás
+                        return BitmapFactory.decodeByteArray(base_decoded, 0, base_decoded.length); //JPEG dekódolás
                     }
                 } else {
                     Log.e("Server", "Hossz nem egyezik");
                 }
 
-                Log.e("getImage()", "Input reading failed");
+                Log.e("getImage()", "Input olvasás hiba");
             } catch (IOException e) {
+                e.printStackTrace();
             }
 
             return null;

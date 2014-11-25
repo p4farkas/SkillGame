@@ -22,15 +22,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //RelativeLayout screen = (RelativeLayout)findViewById(R.id.relative_layout_main);
-        //TransitionDrawable transition = (TransitionDrawable)screen.getBackground();
-        //transition.startTransition(500);
-
-        //RelativeLayout screen = (RelativeLayout)findViewById(R.id.relative_layout_main);
-        //AnimationDrawable backgroundAnimation = (AnimationDrawable) screen.getBackground();
-        //backgroundAnimation.start();
-
-
+        //Játék kezdése
         startButton = (Button) findViewById(R.id.start_button);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +32,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        //Profil
         profileButton = (Button) findViewById(R.id.profil_button);
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +42,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        //Információ
         infoButton = (Button) findViewById(R.id.info_button);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +57,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        //Leírás
         helpButton = (Button) findViewById(R.id.help_button);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override

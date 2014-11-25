@@ -39,11 +39,8 @@ public class RajzolgatoView extends GameAbstract {
     private Rect draw_rect;
     private int final_point = 0;
 
-    private Context context;
-
     public RajzolgatoView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
         this.isInEditMode();
 
         Init();
@@ -53,13 +50,14 @@ public class RajzolgatoView extends GameAbstract {
         RajzolgatoView.next_game = next_game;
     }
 
-    //Kezdőértékek beállítása a paraméterben átadott sorból
+    //Kezdőértékek beállítása a paraméterben átadott szöveges üzenetből
     public static boolean setInitParameters(String line) {
         String[] tokens = line.split(":");
 
         if (!tokens[0].equals(GameAbstract.RAJZOLGATO_NAME))
             return false;
 
+        //Random pontok beállítása
         points = new Point[POINT_LENGTH * GAME_COUNT];
 
         int point_index = 0;
@@ -132,43 +130,12 @@ public class RajzolgatoView extends GameAbstract {
 
         actual_points = new Point[POINT_LENGTH];
 
-//        old_time = System.currentTimeMillis();
-//
-//        //Háttérszálon figyeljük az időt
-//        time_thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                do {
-//                    if (!thread_run)
-//                        break;
-//
-//                    long current_time = System.currentTimeMillis();
-//
-//                    if ((current_time - old_time) >= GAME_MILLIS) {
-//                        current_game++;
-//                        old_time = current_time;
-//                        GameInit();
-//                    }
-//
-//                } while (current_game < GAME_COUNT - 1 && thread_run);
-//
-//                if (!thread_run)
-//                    return;
-//
-//                game_points[1] = final_point;
-//
-//                thread_run2 = false;
-//                RajzolgatoActivity.NextGame(context);
-//            }
-//        });
-
         GameInit();
-
-//        time_thread.start();
     }
 
     @Override
     protected void GameInit() {
+        //A pontok kiolvasásához a kezdő index
         int start = (current_game == 0) ? 0 : current_game * POINT_LENGTH;
         actual_points = Arrays.copyOfRange(points, start, (current_game + 1) * POINT_LENGTH);
         start_x = 0;
@@ -337,7 +304,7 @@ public class RajzolgatoView extends GameAbstract {
                         GameInit();
                     else {
                         thread_run = false;
-
+                        game_points[1] = final_point;
                         if (next_game != null)
                             next_game.NextGame();
                     }

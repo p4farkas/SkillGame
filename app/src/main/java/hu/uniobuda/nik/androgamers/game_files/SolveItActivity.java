@@ -21,12 +21,11 @@ public class SolveItActivity extends Activity implements INextGame {
         @Override
         public void onClick(View view) {
             if (view.getTag() == "PASS") {
-                //Toast.makeText(getBaseContext(), "PASSED!", Toast.LENGTH_SHORT).show();
-                SolveItView.score += 10;
+                SolveItView.score += 500; //Talált
             } else {
-                //Toast.makeText(getBaseContext(), "FAILED!", Toast.LENGTH_SHORT).show();
-//                SolveItView.score -= 5;
+                SolveItView.score -= 250; //Nem talált
             }
+
             SolveItView.solved = true;
         }
     };
@@ -34,11 +33,13 @@ public class SolveItActivity extends Activity implements INextGame {
     private Button second;
     private Button third;
 
+    //Végeredmény megjelenítése
     @Override
     public void NextGame() {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                GameAbstract.setGame_finished(true); //A játék befejeződött
                 Intent intent = new Intent(SolveItActivity.this, ResultActivity.class);
                 intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);

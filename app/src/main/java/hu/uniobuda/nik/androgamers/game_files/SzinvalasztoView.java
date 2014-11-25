@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.Random;
@@ -17,10 +16,8 @@ public class SzinvalasztoView extends GameAbstract {
 
     private static final int COLOR_COUNT = 13;
     private static Random rand = new Random();
-
     private static int code_index = 0;
     private static int name_index = 0;
-
     private static int[] code_indices;
     private static int[] name_indices;
     private static INextGame next_game;
@@ -28,6 +25,7 @@ public class SzinvalasztoView extends GameAbstract {
     final int PURPLE = Color.parseColor("#663399");
     final int BROWN = Color.parseColor("#f4a460");
     final int PINK = Color.parseColor("#ff69b4");
+    private boolean show_points = true;
     private int[] color_codes = null;
     private String[] color_names = null;
     private int view_size_width;
@@ -37,13 +35,11 @@ public class SzinvalasztoView extends GameAbstract {
     private Paint textPaint;
     private Paint scorePaint;
     private int final_point = 0;
-    private Context context;
 
     private boolean thread_run = true;
 
     public SzinvalasztoView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
         this.isInEditMode();
 
         Init();
@@ -103,9 +99,11 @@ public class SzinvalasztoView extends GameAbstract {
         view_size_width = 1000; //dummy values
         view_size_height = 500;
 
+        //Színkódok beállítása
         color_codes = new int[]{Color.WHITE, Color.BLACK, Color.CYAN, Color.DKGRAY,
                 Color.YELLOW, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.RED, ORANGE,
                 PURPLE, BROWN, PINK};
+        //A színnevek beállítása
         color_names = new String[]{"Fehér", "Fekete", "Cián", "Szürke", "Sárga", "Kék",
                 "Zöld", "Magenta", "Piros", "Narancssárga", "Lila", "Barna", "Rózsaszín"};
 
@@ -142,6 +140,7 @@ public class SzinvalasztoView extends GameAbstract {
                 } while (current_game < GAME_COUNT);
 
                 game_points[0] = final_point;
+                show_points = false;
 
                 if (next_game != null)
                     next_game.NextGame();
@@ -169,7 +168,8 @@ public class SzinvalasztoView extends GameAbstract {
 
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 
-        canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + final_point), 10, 20, scorePaint);
+        if (show_points)
+            canvas.drawText("Eredmény: " + String.valueOf(getFinalPoint() + final_point), 10, 20, scorePaint);
 
         if (color_codes == null || color_names == null || current_game > 4)
             return;
@@ -215,16 +215,17 @@ public class SzinvalasztoView extends GameAbstract {
     @Override
     public void GetResult() {
         if (name_indices[current_game] == code_indices[current_game])
-            final_point += 100;
+            final_point += 500; //Talált
         else
-            Log.i("Szinvalaszto", "NEM TALÁLT");
+            final_point -= 250; //Nem talált
 
         current_game++;
         old_time = System.currentTimeMillis();
         if (current_game < GAME_COUNT)
             GameInit();
         else {
-            game_points[0] = final_point;
+            game_points[0] = final_point; //Eredmény mentése
+            show_points = false;
             if (time_thread != null) {
                 thread_run = false;
                 time_thread.interrupt();

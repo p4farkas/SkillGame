@@ -202,7 +202,7 @@ public class ShootingView extends GameAbstract {
             else {
                 started = false;
                 GameInit();
-//                score -= 700;
+                score -= 250;
                 postInvalidate();
             }
         }

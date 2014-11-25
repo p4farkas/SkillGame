@@ -13,6 +13,7 @@ public class SzinvalasztoActivity extends Activity implements INextGame {
 
     private static Handler handler;
 
+    //Következő játék indítása új Activityben
     public void NextGame() {
         handler.post(new Runnable() {
             @Override
@@ -28,6 +29,8 @@ public class SzinvalasztoActivity extends Activity implements INextGame {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_szinvalaszto);
+
+        GameAbstract.init();
 
         handler = new Handler(Looper.getMainLooper());
 

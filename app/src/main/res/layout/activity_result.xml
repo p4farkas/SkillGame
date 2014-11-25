@@ -31,7 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="right"
+            android:paddingRight="15dp"
             android:text="@string/result_myscore_label"
             android:textSize="@dimen/text_size" />
 
@@ -40,7 +41,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="left"
+            android:paddingLeft="15dp"
             android:text="@string/result_enemyscore_label"
             android:textSize="@dimen/text_size" />
     </LinearLayout>

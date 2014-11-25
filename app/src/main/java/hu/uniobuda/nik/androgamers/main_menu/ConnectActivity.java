@@ -73,6 +73,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
         Looper.loop();
     }
 
+    //Játék kezdése: inicializáló szöveg lekérése a kezdő adatokkal
     public void gameInit() {
         try {
             String initString = readInitParameters();
@@ -208,6 +209,7 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
         try {
             port = Integer.parseInt(host_port_text.getText().toString());
         } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
 
         connection = new Connection(Connection.CONNECTION_TYPE.SERVER, null,
@@ -226,12 +228,10 @@ public class ConnectActivity extends Activity implements IClientConnected, IServ
         try {
             port = Integer.parseInt(client_port_text.getText().toString());
         } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
 
         connection = new Connection(Connection.CONNECTION_TYPE.CLIENT,
                 ip, port, ConnectActivity.this);
-
-        //dialog = ProgressDialog.show(ConnectActivity.this, "",
-        //        "Csatlakozás a játékostárshoz...", true);
     }
 }

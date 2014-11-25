@@ -55,8 +55,6 @@ public class ResultActivity extends Activity implements IFinalResult {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        new_game_button.setEnabled(false);
-
         ClientThread.setFinal_result(this);
         ServerThread.setFinal_result(this);
 
@@ -64,6 +62,7 @@ public class ResultActivity extends Activity implements IFinalResult {
         pointtext2 = (TextView) findViewById(R.id.final_result2);
         result_text = (TextView) findViewById(R.id.result_text);
         new_game_button = (Button) findViewById(R.id.new_game_button);
+        new_game_button.setEnabled(false);
         new_game_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
