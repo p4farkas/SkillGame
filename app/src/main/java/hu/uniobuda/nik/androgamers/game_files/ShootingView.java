@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +143,7 @@ public class ShootingView extends GameAbstract {
             public void run() {
                 bg = BitmapFactory.decodeResource(context.getResources(), R.drawable.front_gun);
                 postInvalidate();
-                getRootView().setBackgroundColor(Color.RED);
+                ((View) getParent()).setBackgroundColor(Color.RED);
                 startTime = System.currentTimeMillis();
                 started = true;
 
@@ -160,7 +161,7 @@ public class ShootingView extends GameAbstract {
                                 back_handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        getRootView().setBackgroundColor(Color.WHITE);
+                                        ((View) getParent()).setBackgroundColor(Color.WHITE);
                                         if (vibrator != null)
                                             vibrator.vibrate(100);
                                     }
